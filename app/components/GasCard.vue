@@ -292,31 +292,31 @@ const mapUrl = computed(() => {
                 <!-- Preise -->
                 <div class="grid grid-cols-3 gap-2">
                     <div class="bg-[#1a1a24] rounded-xl p-3 text-center">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
+                        <div class="flex items-center justify-center gap-1 text-emerald-600 text-lg mb-1.5">
                             <Flame class="w-4 h-4" />
                             <span>E5</span>
                         </div>
-                        <div class="text-xl font-extrabold tabular-nums" :class="typeof station.e5 === 'number' && diffCents !== null && (diffCents ?? 0) <= -5 ? 'text-emerald-400' : 'text-white'">
+                        <div class="text-xl font-extrabold tabular-nums text-emerald-400">
                             {{ formatPrice(station.e5) }}
                         </div>
                     </div>
 
                     <div class="bg-[#1a1a24] rounded-xl p-3 text-center">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
+                        <div class="flex items-center justify-center gap-1 text-teal-600 text-lg mb-1.5">
                             <Zap class="w-4 h-4" />
                             <span>E10</span>
                         </div>
-                        <div class="text-xl font-extrabold text-white tabular-nums">
+                        <div class="text-xl font-extrabold tabular-nums text-teal-400">
                             {{ formatPrice(station.e10) }}
                         </div>
                     </div>
 
                     <div class="bg-[#1a1a24] rounded-xl p-3 text-center">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
+                        <div class="flex items-center justify-center gap-1 text-yellow-600 text-lg mb-1.5">
                             <Fuel class="w-4 h-4" />
                             <span>Diesel</span>
                         </div>
-                        <div class="text-xl font-extrabold text-white tabular-nums">
+                        <div class="text-xl font-extrabold tabular-nums text-yellow-400">
                             {{ formatPrice(station.diesel) }}
                         </div>
                     </div>
