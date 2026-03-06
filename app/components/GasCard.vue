@@ -14,9 +14,7 @@ const emit = defineEmits<{
     (e: "swipe-right"): void;
 }>();
 
-// ------------------------------------------------------------------
 // Drag State
-// ------------------------------------------------------------------
 const cardRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
 const startX = ref(0);

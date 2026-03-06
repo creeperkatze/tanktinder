@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Heart, X, RefreshCw, MapPin, Navigation, Flame } from "lucide-vue-next";
+import { Heart, X, RefreshCw, MapPin, Navigation, Flame, Undo2, Redo2 } from "lucide-vue-next";
 import type { Station, StationsApiResponse } from "~/types/station";
 import GasCard from "~/components/GasCard.vue";
 
-const USE_MOCK = false;
+const USE_MOCK = true;
 
 const MOCK_STATIONS: Station[] = [
     { id: "1", name: "Aral Tankstelle", brand: "Aral", street: "Hauptstraße", houseNumber: "12", postCode: 10115, place: "Berlin", lat: 52.52, lng: 13.405, dist: 0.4, e5: 1.789, e10: 1.759, diesel: 1.689, isOpen: true },
@@ -146,7 +146,7 @@ function mapsLink(station: Station) {
 </script>
 
 <template>
-    <div class="min-h-screen bg-[#0a0a0f] flex flex-col select-none overflow-hidden">
+    <div class="min-h-screen bg-[#0a0a0f] flex flex-col select-none">
         <!-- Header -->
         <header class="relative z-20 px-4 pt-4 pb-3">
             <div class="max-w-sm mx-auto">
@@ -158,18 +158,11 @@ function mapsLink(station: Station) {
                     <p class="text-gray-500 mt-1 tracking-wide">Finde Tankstellen in deiner Nähe</p>
                 </div>
 
-                <!-- Location pill -->
-                <div class="flex justify-center">
-                    <button class="flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full" @click="detectLocation">
-                        <MapPin class="w-3 h-3 transition-colors" :class="locationGranted ? 'text-emerald-400' : locationPending ? 'text-yellow-400 animate-pulse' : ''" />
-                        {{ locationGranted ? "Standort aktiv" : locationPending ? "Suche Standort..." : "Standort freigeben" }}
-                    </button>
-                </div>
             </div>
         </header>
 
         <!-- Desperation Meter -->
-        <div class="px-4 pb-3 z-20">
+        <div class="px-6 pb-3 z-20">
             <div class="max-w-sm mx-auto bg-[#111118] rounded-2xl p-4 border border-white/5">
                 <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center gap-1">
@@ -191,7 +184,19 @@ function mapsLink(station: Station) {
         </div>
 
         <!-- Card Stack -->
-        <div class="flex-1 relative flex flex-col items-center justify-start px-4">
+        <div class="relative flex flex-col items-center justify-start px-6 overflow-x-hidden">
+            <!-- Swipe hints -->
+            <div v-if="hasMoreCards" class="absolute inset-x-0 flex justify-between items-center px-2 pointer-events-none z-0" style="top: 220px">
+                <div class="flex flex-col items-center gap-1 text-red-900/60">
+                    <Undo2 class="w-6 h-6" />
+                    <span class="text-xs font-bold uppercase tracking-widest">Nein</span>
+                </div>
+                <div class="flex flex-col items-center gap-1 text-emerald-900/60">
+                    <Redo2 class="w-6 h-6" />
+                    <span class="text-xs font-bold uppercase tracking-widest">Ja</span>
+                </div>
+            </div>
+
             <div class="relative w-full" style="height: 560px; max-width: 420px">
                 <!-- Geolocation pending -->
                 <Transition name="fade">
@@ -294,7 +299,7 @@ function mapsLink(station: Station) {
         <Transition name="match">
             <div v-if="showMatchOverlay && matchedStation" class="fixed inset-0 z-50 overflow-y-auto" @click.self="dismissMatch">
                 <!-- Backdrop -->
-                <div class="absolute inset-0 bg-black/80 backdrop-blur-md" @click="dismissMatch" />
+                <div class="absolute inset-0 backdrop-blur-lg" style="background: radial-gradient(ellipse at 50% 0%, rgba(220,38,38,0.35) 0%, rgba(0,0,0,0.88) 70%)" @click="dismissMatch" />
 
                 <!-- Content -->
                 <div class="relative flex flex-col items-center gap-4 px-4 py-8 min-h-full justify-center">
@@ -306,7 +311,7 @@ function mapsLink(station: Station) {
                     </div>
 
                     <!-- Card + CTAs container -->
-                    <div class="bg-[#111118] border border-white/10 rounded-3xl p-4 w-full flex flex-col gap-4" style="max-width: 452px">
+                    <div class=" border border-white/10 rounded-3xl p-4 w-full flex flex-col gap-4" style="max-width: 452px">
                         <!-- Reuse GasCard — non-interactive, shows map + all info -->
                         <div class="relative w-full" style="height: 540px">
                             <GasCard
