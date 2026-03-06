@@ -3,67 +3,72 @@ import { Heart, X, RefreshCw, MapPin, Navigation, Flame, Fuel } from "lucide-vue
 import type { Station, StationsApiResponse } from "~/types/station";
 import GasCard from "~/components/GasCard.vue";
 
-// Location & Data Fetching
-const userLat = ref("52.5200");
-const userLng = ref("13.4050");
-const locationGranted = ref(false);
-const locationPending = ref(false);
-const isMockData = ref(false);
+// Location state
+const locationGranted = ref(false)
+const locationPending = ref(true)
+const locationDenied = ref(false)
 
-// query is a plain reactive object — useFetch watches its properties
-const fetchQuery = reactive({ lat: userLat.value, lng: userLng.value });
+// Fetch — not immediate, triggered after geolocation resolves
+const fetchLat = ref('')
+const fetchLng = ref('')
 
-const { data, pending, error, refresh } = await useFetch<StationsApiResponse>("/api/stations", {
-    query: fetchQuery,
-});
+const { data, pending, error, refresh, execute } = useFetch<StationsApiResponse>('/api/stations', {
+    query: { lat: fetchLat, lng: fetchLng },
+    immediate: false,
+})
 
 // Card Stack State
-const stations = ref<Station[]>([]);
-const currentIndex = ref(0);
-const matchedStation = ref<Station | null>(null);
-const showMatchOverlay = ref(false);
-const swipeCount = ref(0);
-const rejectedCount = ref(0);
+const stations = ref<Station[]>([])
+const currentIndex = ref(0)
+const matchedStation = ref<Station | null>(null)
+const showMatchOverlay = ref(false)
+const swipeCount = ref(0)
+const rejectedCount = ref(0)
 
-// immediate: true ensures we handle data already available from SSR hydration
-watch(
-    data,
-    (d) => {
-        if (d) {
-            stations.value = [...d.stations];
-            currentIndex.value = 0;
-            isMockData.value = d.isMock;
-            matchedStation.value = null;
-            showMatchOverlay.value = false;
-        }
-    },
-    { immediate: true },
-);
+watch(data, (d) => {
+    if (d) {
+        stations.value = [...d.stations]
+        currentIndex.value = 0
+        matchedStation.value = null
+        showMatchOverlay.value = false
+    }
+})
 
-const visibleCards = computed(() => [0, 1, 2].map((offset) => ({ station: stations.value[currentIndex.value + offset], offset })).filter((item): item is { station: Station; offset: number } => item.station !== undefined));
+const visibleCards = computed(() =>
+    [0, 1, 2]
+        .map((offset) => ({ station: stations.value[currentIndex.value + offset], offset }))
+        .filter((item): item is { station: Station; offset: number } => item.station !== undefined),
+)
 
-const hasMoreCards = computed(() => currentIndex.value < stations.value.length);
+const hasMoreCards = computed(() => currentIndex.value < stations.value.length)
 
 // Geolocation
 function detectLocation() {
-    if (!navigator.geolocation) return;
-    locationPending.value = true;
+    if (!navigator.geolocation) {
+        locationDenied.value = true
+        locationPending.value = false
+        return
+    }
+    locationPending.value = true
+    locationDenied.value = false
     navigator.geolocation.getCurrentPosition(
         (pos) => {
-            fetchQuery.lat = pos.coords.latitude.toFixed(6);
-            fetchQuery.lng = pos.coords.longitude.toFixed(6);
-            locationGranted.value = true;
-            locationPending.value = false;
+            fetchLat.value = pos.coords.latitude.toFixed(6)
+            fetchLng.value = pos.coords.longitude.toFixed(6)
+            locationGranted.value = true
+            locationPending.value = false
+            execute()
         },
         () => {
-            locationPending.value = false;
+            locationPending.value = false
+            locationDenied.value = true
         },
-    );
+    )
 }
 
 onMounted(() => {
-    detectLocation();
-});
+    detectLocation()
+})
 
 // Swipe Logic
 const topCardRef = ref<InstanceType<typeof GasCard> | null>(null);
@@ -148,14 +153,6 @@ function primaryPriceDisplay(station: Station) {
                     <p class="text-gray-500 mt-1 tracking-wide">Finde Tankstellen in deiner Nähe</p>
                 </div>
 
-                <!-- Mock data banner -->
-                <Transition name="fade">
-                    <div v-if="isMockData" class="text-center text-xs text-amber-400/80 bg-amber-400/10 border border-amber-400/20 rounded-full px-3 py-1.5 mb-2">
-                        Demo-Modus – Beispieldaten aktiv.
-                        <span class="text-amber-600"> TANKERKOENIG_API_KEY setzen für echte Preise.</span>
-                    </div>
-                </Transition>
-
                 <!-- Location pill -->
                 <div class="flex justify-center">
                     <button class="flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full" @click="detectLocation">
@@ -191,6 +188,27 @@ function primaryPriceDisplay(station: Station) {
         <!-- Card Stack -->
         <div class="flex-1 relative flex flex-col items-center justify-start px-4">
             <div class="relative w-full" style="height: 560px; max-width: 420px">
+                <!-- Geolocation pending -->
+                <Transition name="fade">
+                    <div v-if="locationPending" class="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                        <MapPin class="w-10 h-10 text-yellow-400 animate-pulse" />
+                        <p class="text-gray-400 text-center max-w-xs leading-relaxed">Standort wird ermittelt...</p>
+                    </div>
+                </Transition>
+
+                <!-- Geolocation denied -->
+                <Transition name="fade">
+                    <div v-if="locationDenied && !locationPending" class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-4">
+                        <MapPin class="w-10 h-10 text-red-400" />
+                        <h3 class="text-white font-extrabold text-xl">Standort nicht verfügbar</h3>
+                        <p class="text-gray-400 text-sm max-w-xs">Bitte Standortzugriff erlauben und erneut versuchen.</p>
+                        <button class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full transition-colors text-sm" @click="detectLocation">
+                            <MapPin class="w-4 h-4" />
+                            Erneut versuchen
+                        </button>
+                    </div>
+                </Transition>
+
                 <!-- Loading -->
                 <Transition name="fade">
                     <div v-if="pending && !stations.length" class="absolute inset-0 flex flex-col items-center justify-center gap-4">

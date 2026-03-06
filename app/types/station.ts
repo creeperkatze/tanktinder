@@ -17,6 +17,5 @@ export interface Station {
 
 export interface StationsApiResponse {
   ok: boolean
-  isMock: boolean
   stations: Station[]
 }
