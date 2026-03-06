@@ -299,8 +299,8 @@ const mapUrl = computed(() => {
 
                 <!-- Preise -->
                 <div class="grid grid-cols-3 gap-2">
-                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center">
-                        <div class="flex items-center justify-center gap-1 text-emerald-600 text-lg mb-1.5">
+                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-emerald-900/60">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
                             <Flame class="w-4 h-4" />
                             <span>E5</span>
                         </div>
@@ -311,8 +311,8 @@ const mapUrl = computed(() => {
                         </div>
                     </div>
 
-                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center">
-                        <div class="flex items-center justify-center gap-1 text-teal-600 text-lg mb-1.5">
+                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-teal-900/60">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
                             <Zap class="w-4 h-4" />
                             <span>E10</span>
                         </div>
@@ -323,8 +323,8 @@ const mapUrl = computed(() => {
                         </div>
                     </div>
 
-                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center">
-                        <div class="flex items-center justify-center gap-1 text-yellow-600 text-lg mb-1.5">
+                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-yellow-900/60">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
                             <Fuel class="w-4 h-4" />
                             <span>Diesel</span>
                         </div>
@@ -338,11 +338,11 @@ const mapUrl = computed(() => {
 
                 <!-- Entfernung + Durchschnitt -->
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-[#1a1a24] rounded-xl p-3 flex items-center gap-2">
+                    <div class="bg-[#1a1a24] rounded-xl p-3 flex items-center gap-2 border border-white/5">
                         <Clock class="w-4 h-4 text-gray-600 shrink-0" />
                         <span class="text-gray-400">{{ distanceLabel }}</span>
                     </div>
-                    <div class="bg-[#1a1a24] rounded-xl p-3 flex items-center gap-2">
+                    <div class="bg-[#1a1a24] rounded-xl p-3 flex items-center gap-2 border border-white/5">
                         <span class="text-gray-500">Ø Umkreis</span>
                         <span class="text-gray-300 ml-auto tabular-nums">
                             {{ areaAverage !== null ? areaAverage.toFixed(3).replace(".", ",") + " €" : "–" }}
