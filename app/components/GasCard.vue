@@ -102,6 +102,12 @@ const primaryPrice = computed<number | null>(() => {
     return null;
 });
 
+const fillUpCost = computed<string | null>(() => {
+    const p = primaryPrice.value;
+    if (p === null) return null;
+    return "~" + (50 * p).toFixed(2).replace(".", ",") + " €";
+});
+
 // Price vs. area average
 const diffCents = computed<number | null>(() => {
     const p = primaryPrice.value;
@@ -343,10 +349,9 @@ const mapUrl = computed(() => {
                         <span class="text-gray-400">{{ distanceLabel }}</span>
                     </div>
                     <div class="bg-[#1a1a24] rounded-xl p-3 flex items-center gap-2 border border-white/5">
-                        <span class="text-gray-500">Ø Umkreis</span>
-                        <span class="text-gray-300 ml-auto tabular-nums">
-                            {{ areaAverage !== null ? areaAverage.toFixed(3).replace(".", ",") + " €" : "–" }}
-                        </span>
+                        <Fuel class="w-4 h-4 text-gray-600 shrink-0" />
+                        <span class="text-gray-500">50 L</span>
+                        <span class="text-gray-300 ml-auto tabular-nums">{{ fillUpCost ?? "–" }}</span>
                     </div>
                 </div>
             </div>

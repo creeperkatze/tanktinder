@@ -1,77 +1,85 @@
 <script setup lang="ts">
-import { Heart, X, RefreshCw, MapPin, Navigation, Flame, Fuel } from "lucide-vue-next";
+import { Heart, X, RefreshCw, MapPin, Navigation, Flame } from "lucide-vue-next";
 import type { Station, StationsApiResponse } from "~/types/station";
 import GasCard from "~/components/GasCard.vue";
 
+const USE_MOCK = false;
+
+const MOCK_STATIONS: Station[] = [
+    { id: "1", name: "Aral Tankstelle", brand: "Aral", street: "Hauptstraße", houseNumber: "12", postCode: 10115, place: "Berlin", lat: 52.52, lng: 13.405, dist: 0.4, e5: 1.789, e10: 1.759, diesel: 1.689, isOpen: true },
+    { id: "2", name: "Shell Station", brand: "Shell", street: "Unter den Linden", houseNumber: "5", postCode: 10117, place: "Berlin", lat: 52.516, lng: 13.384, dist: 0.9, e5: 1.819, e10: 1.799, diesel: 1.709, isOpen: true },
+    { id: "3", name: "Total Energies", brand: "TotalEnergies", street: "Alexanderplatz", houseNumber: "1", postCode: 10178, place: "Berlin", lat: 52.521, lng: 13.412, dist: 1.3, e5: 1.759, e10: 1.739, diesel: 1.659, isOpen: false },
+    { id: "4", name: "Jet Tankstelle", brand: "JET", street: "Prenzlauer Allee", houseNumber: "88", postCode: 10405, place: "Berlin", lat: 52.535, lng: 13.42, dist: 2.1, e5: 1.739, e10: 1.719, diesel: 1.649, isOpen: true },
+    { id: "5", name: "Esso Tankstelle", brand: "Esso", street: "Karl-Marx-Allee", houseNumber: "33", postCode: 10243, place: "Berlin", lat: 52.511, lng: 13.435, dist: 2.7, e5: 1.849, e10: false, diesel: 1.729, isOpen: true },
+    { id: "6", name: "Avia Tankstelle", brand: "Avia", street: "Tempelhofer Damm", houseNumber: "2", postCode: 12101, place: "Berlin", lat: 52.476, lng: 13.384, dist: 3.9, e5: 1.769, e10: 1.749, diesel: 1.669, isOpen: true },
+];
+
 // Location state
-const locationGranted = ref(false)
-const locationPending = ref(true)
-const locationDenied = ref(false)
+const locationGranted = ref(false);
+const locationPending = ref(!USE_MOCK);
+const locationDenied = ref(false);
 
 // Fetch — not immediate, triggered after geolocation resolves
-const fetchLat = ref('')
-const fetchLng = ref('')
+const fetchLat = ref("");
+const fetchLng = ref("");
 
-const { data, pending, error, refresh, execute } = useFetch<StationsApiResponse>('/api/stations', {
+const { data, pending, error, refresh, execute } = useFetch<StationsApiResponse>("/api/stations", {
     query: { lat: fetchLat, lng: fetchLng },
     immediate: false,
-})
+});
 
 // Card Stack State
-const stations = ref<Station[]>([])
-const currentIndex = ref(0)
-const matchedStation = ref<Station | null>(null)
-const showMatchOverlay = ref(false)
-const swipeCount = ref(0)
-const rejectedCount = ref(0)
+const stations = ref<Station[]>(USE_MOCK ? MOCK_STATIONS : []);
+const currentIndex = ref(0);
+const matchedStation = ref<Station | null>(null);
+const showMatchOverlay = ref(false);
+const swipeCount = ref(0);
+const rejectedCount = ref(0);
 
 watch(data, (d) => {
     if (d) {
-        stations.value = [...d.stations]
-        currentIndex.value = 0
-        matchedStation.value = null
-        showMatchOverlay.value = false
+        stations.value = [...d.stations];
+        currentIndex.value = 0;
+        matchedStation.value = null;
+        showMatchOverlay.value = false;
     }
-})
+});
 
-const visibleCards = computed(() =>
-    [0, 1, 2]
-        .map((offset) => ({ station: stations.value[currentIndex.value + offset], offset }))
-        .filter((item): item is { station: Station; offset: number } => item.station !== undefined),
-)
+const visibleCards = computed(() => [0, 1, 2].map((offset) => ({ station: stations.value[currentIndex.value + offset], offset })).filter((item): item is { station: Station; offset: number } => item.station !== undefined));
 
-const hasMoreCards = computed(() => currentIndex.value < stations.value.length)
+const hasMoreCards = computed(() => currentIndex.value < stations.value.length);
 
 // Geolocation
 function detectLocation() {
+    if (USE_MOCK) return;
     if (!navigator.geolocation) {
-        locationDenied.value = true
-        locationPending.value = false
-        return
+        locationDenied.value = true;
+        locationPending.value = false;
+        return;
     }
-    locationPending.value = true
-    locationDenied.value = false
+    locationPending.value = true;
+    locationDenied.value = false;
     navigator.geolocation.getCurrentPosition(
         (pos) => {
-            fetchLat.value = pos.coords.latitude.toFixed(6)
-            fetchLng.value = pos.coords.longitude.toFixed(6)
-            locationGranted.value = true
-            locationPending.value = false
-            execute()
+            fetchLat.value = pos.coords.latitude.toFixed(6);
+            fetchLng.value = pos.coords.longitude.toFixed(6);
+            locationGranted.value = true;
+            locationPending.value = false;
+            execute();
         },
         () => {
-            locationPending.value = false
-            locationDenied.value = true
+            locationPending.value = false;
+            locationDenied.value = true;
         },
-    )
+    );
 }
 
 onMounted(() => {
-    detectLocation()
-})
+    if (!USE_MOCK) detectLocation();
+});
 
 // Swipe Logic
-const topCardRef = ref<InstanceType<typeof GasCard> | null>(null);
+const cardRefs: Record<string, InstanceType<typeof GasCard>> = {};
 
 function handleSwipeLeft() {
     if (!hasMoreCards.value) return;
@@ -94,11 +102,13 @@ function dismissMatch() {
 }
 
 function swipeLeftButton() {
-    topCardRef.value?.triggerSwipe("left");
+    const id = stations.value[currentIndex.value]?.id;
+    if (id) cardRefs[id]?.triggerSwipe("left");
 }
 
 function swipeRightButton() {
-    topCardRef.value?.triggerSwipe("right");
+    const id = stations.value[currentIndex.value]?.id;
+    if (id) cardRefs[id]?.triggerSwipe("right");
 }
 
 // Desperation Meter
@@ -133,11 +143,6 @@ function mapsLink(station: Station) {
     return `https://www.google.com/maps/search/?api=1&query=${q}`;
 }
 
-// Matched station primary price helper
-function primaryPriceDisplay(station: Station) {
-    const p = [station.e5, station.e10, station.diesel].find((v): v is number => typeof v === "number" && v > 0);
-    return p ? p.toFixed(3).replace(".", ",") + " € / L" : "Kein Preis verfügbar";
-}
 </script>
 
 <template>
@@ -145,7 +150,7 @@ function primaryPriceDisplay(station: Station) {
         <!-- Header -->
         <header class="relative z-20 px-4 pt-4 pb-3">
             <div class="max-w-sm mx-auto">
-                <div class="text-center mb-3">
+                <div class="text-center mb-3 cursor-pointer" @click="() => { currentIndex = 0; swipeCount = 0; rejectedCount = 0; }">
                     <h1 class="flex items-center justify-center gap-2 text-4xl tracking-tighter">
                         <img class="w-8 h-8" src="/favicon.svg" />
                         <span class="text-red-500 font-extrabold">TankTinder</span>
@@ -252,13 +257,7 @@ function primaryPriceDisplay(station: Station) {
                     <GasCard
                         v-for="{ station, offset } in [...visibleCards].reverse()"
                         :key="station.id"
-                        :ref="
-                            offset === 0
-                                ? (el) => {
-                                      topCardRef = el as InstanceType<typeof GasCard>;
-                                  }
-                                : undefined
-                        "
+                        :ref="(el) => { if (el) cardRefs[station.id] = el as InstanceType<typeof GasCard>; else delete cardRefs[station.id]; }"
                         :station="station"
                         :is-top="offset === 0"
                         :stack-offset="offset"
@@ -278,10 +277,10 @@ function primaryPriceDisplay(station: Station) {
 
                 <!-- Stats counter -->
                 <div class="text-center min-w-[72px]">
-                    <div class="text-xs text-gray-600 uppercase tracking-wider mb-0.5">Gematcht</div>
+                    <div class="text-xs text-gray-600 uppercase tracking-wider mb-0.5">Gesehen</div>
                     <div class="text-xl font-black text-white tabular-nums">
-                        {{ swipeCount - rejectedCount }}
-                        <span class="text-gray-600 text-sm font-normal">/ {{ swipeCount }}</span>
+                        {{ currentIndex }}
+                        <span class="text-gray-600 text-sm font-normal">/ {{ stations.length }}</span>
                     </div>
                 </div>
 
@@ -293,44 +292,41 @@ function primaryPriceDisplay(station: Station) {
         </div>
 
         <Transition name="match">
-            <div v-if="showMatchOverlay && matchedStation" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="dismissMatch">
+            <div v-if="showMatchOverlay && matchedStation" class="fixed inset-0 z-50 overflow-y-auto" @click.self="dismissMatch">
                 <!-- Backdrop -->
-                <div class="absolute inset-0 bg-black/80 backdrop-blur-md" />
+                <div class="absolute inset-0 bg-black/80 backdrop-blur-md" @click="dismissMatch" />
 
-                <!-- Match Card -->
-                <div class="relative match-overlay bg-[#111118] rounded-3xl p-8 max-w-sm w-full border border-white/10 card-shadow text-center">
-                    <!-- Iridescent accent bar -->
-                    <div class="oil-slick h-1.5 rounded-full mb-6" />
-
-                    <div class="text-5xl mb-3">💸</div>
-                    <h2 class="text-3xl font-black text-white mb-1">It's a Match!</h2>
-                    <p class="text-gray-400 text-sm mb-6">Du hast diese Tankstelle ausgewählt.</p>
-
-                    <!-- Station info box -->
-                    <div class="bg-[#1a1a24] rounded-2xl p-4 mb-6 text-left">
-                        <h3 class="text-white font-bold text-base leading-tight">
-                            {{ matchedStation.name }}
-                        </h3>
-                        <p class="text-gray-400 text-sm mt-1 flex items-center gap-1.5">
-                            <MapPin class="w-3.5 h-3.5 shrink-0 text-pink-500" />
-                            {{ matchedStation.street }} {{ matchedStation.houseNumber }}, {{ matchedStation.place }} {{ matchedStation.postCode }}
-                        </p>
-                        <div class="mt-3 pt-3 border-t border-white/5">
-                            <div class="text-gray-500 text-xs uppercase tracking-wider mb-1">Preis E5</div>
-                            <div class="text-2xl font-black text-white">
-                                {{ primaryPriceDisplay(matchedStation) }}
-                            </div>
-                        </div>
+                <!-- Content -->
+                <div class="relative flex flex-col items-center gap-4 px-4 py-8 min-h-full justify-center">
+                    <!-- Header -->
+                    <div class="text-center">
+                        <div class="text-5xl mb-2">💸</div>
+                        <h2 class="text-3xl font-black text-white mb-1">It's a Match!</h2>
+                        <p class="text-gray-400 text-sm">Du hast diese Tankstelle ausgewählt</p>
                     </div>
 
-                    <!-- CTAs -->
-                    <div class="flex flex-col gap-3">
-                        <a :href="mapsLink(matchedStation)" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-500 hover:to-orange-400 text-white font-bold py-4 px-6 rounded-2xl transition-all active:scale-95 text-sm">
-                            <Navigation class="w-5 h-5" />
-                            Route starten
-                        </a>
+                    <!-- Card + CTAs container -->
+                    <div class="bg-[#111118] border border-white/10 rounded-3xl p-4 w-full flex flex-col gap-4" style="max-width: 452px">
+                        <!-- Reuse GasCard — non-interactive, shows map + all info -->
+                        <div class="relative w-full" style="height: 540px">
+                            <GasCard
+                                :station="matchedStation"
+                                :is-top="false"
+                                :stack-offset="0"
+                                :area-average="averagePrice"
+                                @swipe-left="() => {}"
+                                @swipe-right="() => {}"
+                            />
+                        </div>
 
-                        <button class="text-gray-500 hover:text-gray-300 text-sm py-2 transition-colors" @click="dismissMatch">Schließen</button>
+                        <!-- CTAs -->
+                        <div class="flex flex-col gap-3">
+                            <a :href="mapsLink(matchedStation)" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-500 hover:to-orange-400 text-white font-bold py-4 px-6 rounded-2xl transition-all active:scale-95 text-sm">
+                                <Navigation class="w-5 h-5" />
+                                Route starten
+                            </a>
+                            <button class="text-gray-500 hover:text-gray-300 text-sm py-2 transition-colors" @click="dismissMatch">Schließen</button>
+                        </div>
                     </div>
                 </div>
             </div>
