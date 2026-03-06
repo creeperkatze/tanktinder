@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     },
 
     runtimeConfig: {
-        tankerkoenigApiKey: process.env.TANKERKOENIG_API_KEY ?? "",
+        tankerkoenigApiKey: "",
     },
 
     app: {
