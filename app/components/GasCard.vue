@@ -295,43 +295,43 @@ const mapUrl = computed(() => {
                 </div>
 
                 <!-- Preisvergleich Badge -->
-                <div class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg w-fit text-sm" :class="priceBadge.colorClass">
+                <div class="inline-flex items-center gap-1 px-2 py-1 rounded-lg w-fit text-sm" :class="priceBadge.colorClass">
                     <component :is="diffIcon" class="w-3.5 h-3.5" />
                     {{ priceBadge.label }}
                 </div>
 
                 <!-- Preise -->
                 <div class="grid grid-cols-3 gap-2">
-                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-emerald-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
+                    <div class="bg-[#1a1a24] rounded-xl p-2 text-center border border-emerald-900/60">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1">
                             <Flame class="w-4 h-4" />
                             <span>E5</span>
                         </div>
-                        <div class="rounded-lg py-1 px-2 bg-black/20">
+                        <div class="rounded-lg py-1 px-1 bg-black/20">
                             <div class="text-lg font-extrabold tabular-nums" :class="priceColor(station.e5)">
                                 {{ formatPrice(station.e5) }}
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-blue-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
+                    <div class="bg-[#1a1a24] rounded-xl p-2 text-center border border-blue-900/60">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1">
                             <Zap class="w-4 h-4" />
                             <span>E10</span>
                         </div>
-                        <div class="rounded-lg py-1 px-2 bg-black/20">
+                        <div class="rounded-lg py-1 px-1 bg-black/20">
                             <div class="text-lg font-extrabold tabular-nums" :class="priceColor(station.e10)">
                                 {{ formatPrice(station.e10) }}
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-yellow-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
+                    <div class="bg-[#1a1a24] rounded-xl p-2 text-center border border-yellow-900/60">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1">
                             <Fuel class="w-4 h-4" />
                             <span>Diesel</span>
                         </div>
-                        <div class="rounded-lg py-1 px-2 bg-black/20">
+                        <div class="rounded-lg py-1 px-1 bg-black/20">
                             <div class="text-lg font-extrabold tabular-nums" :class="priceColor(station.diesel)">
                                 {{ formatPrice(station.diesel) }}
                             </div>
