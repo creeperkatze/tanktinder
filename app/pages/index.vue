@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Heart, X, RefreshCw, MapPin, Navigation, Flame, ChevronLeft, ChevronRight } from "lucide-vue-next";
+import { Heart, X, RefreshCw, MapPin, Navigation, Flame, ChevronLeft, ChevronRight, Share2 } from "lucide-vue-next";
 import type { Station, StationsApiResponse } from "~/types/station";
 import StationCard from "~/components/StationCard.vue";
 
@@ -185,6 +185,14 @@ function stationShareData(station: Station) {
     };
 }
 
+const canShare = ref(false);
+onMounted(() => { canShare.value = !!navigator.share; });
+
+async function shareMatch() {
+    if (!matchedStation.value || !navigator.share) return;
+    try { await navigator.share(stationShareData(matchedStation.value)); } catch {}
+}
+
 // Google Maps link helper
 function mapsLink(station: Station) {
     const q = encodeURIComponent(`${station.name}, ${station.street} ${station.houseNumber}, ${station.postCode} ${station.place}`);
@@ -240,7 +248,7 @@ function mapsLink(station: Station) {
 
         <!-- Card Stack -->
         <div class="relative flex flex-col items-center justify-start px-4 overflow-x-hidden">
-            <div class="relative w-full" style="max-width: 420px; min-height: 560px">
+            <div class="relative w-full" style="max-width: 420px; min-height: 490px">
                 <!-- Geolocation pending -->
                 <Transition name="fade">
                     <div v-if="locationPending" class="absolute inset-0 flex flex-col items-center justify-center gap-4">
@@ -364,13 +372,17 @@ function mapsLink(station: Station) {
                     <!-- Card + CTAs container -->
                     <div class="border border-white/10 rounded-3xl p-4 w-full flex flex-col gap-4" style="max-width: 452px">
                         <!-- Reuse StationCard — non-interactive, shows map + all info -->
-                        <div class="relative w-full" style="height: 540px">
+                        <div class="relative w-full" style="height: 470px">
                             <StationCard :station="matchedStation" :is-top="false" :in-flow="true" :stack-offset="0" :area-average="averagePrice" :share-data="stationShareData(matchedStation)" @swipe-left="() => {}" @swipe-right="() => {}" />
                         </div>
 
                         <!-- CTAs -->
                         <div class="flex flex-col gap-3">
-                            <a :href="mapsLink(matchedStation)" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-500 hover:to-orange-400 text-white font-bold py-4 px-6 rounded-2xl transition-all active:scale-95 text-sm">
+                            <button v-if="canShare" class="flex items-center justify-center gap-2 bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-500 hover:to-orange-400 border border-white/20 text-white font-bold py-4 px-6 rounded-2xl transition-all active:scale-95 text-sm" @click="shareMatch">
+                                <Share2 class="w-5 h-5" />
+                                Teilen
+                            </button>
+                            <a :href="mapsLink(matchedStation)" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/20 text-white font-bold text-sm transition-all active:scale-95">
                                 <Navigation class="w-5 h-5" />
                                 Route starten
                             </a>

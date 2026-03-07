@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MapPin, Clock, Fuel, Heart, X, Flame, Zap, TrendingDown, TrendingUp, Minus, Share2 } from "lucide-vue-next";
+import { MapPin, Clock, Fuel, Heart, X, Flame, Zap, TrendingDown, TrendingUp, Minus } from "lucide-vue-next";
 import type { Station } from "~/types/station";
 
 const props = defineProps<{
@@ -106,19 +106,6 @@ function triggerSwipe(direction: "left" | "right") {
 }
 
 defineExpose({ triggerSwipe });
-
-// Web Share API
-const canShare = ref(false);
-onMounted(() => {
-    canShare.value = !!navigator.share;
-});
-
-async function share() {
-    if (!navigator.share || !props.shareData) return;
-    try {
-        await navigator.share(props.shareData);
-    } catch {}
-}
 
 // Display helpers
 const primaryPrice = computed<number | null>(() => {
@@ -265,9 +252,10 @@ const mapUrl = computed(() => {
 
 <template>
     <div ref="cardRef" class="select-none touch-pan-y absolute inset-x-0 top-0" :class="isTop ? 'cursor-grab active:cursor-grabbing z-10' : inFlow ? 'z-10' : `pointer-events-none z-${10 - stackOffset}`" :style="{ transform: cardTransform, transition: cardTransition }" @pointerdown="onPointerDown" @pointermove="onPointerMove" @pointerup="onPointerUp" @pointercancel="onPointerUp">
-        <div class="relative rounded-2xl overflow-hidden bg-[#111118] border border-white/[0.06] flex flex-col" style="height: 540px; box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7)">
-            <!-- Brand color gradient at bottom -->
+        <div class="relative rounded-2xl overflow-hidden bg-[#111118] border border-white/[0.06] flex flex-col" style="height: 470px;">
+            <!-- Brand color gradient at bottom
             <div class="absolute bottom-0 inset-x-0 h-28 pointer-events-none" :style="`background: linear-gradient(to top, ${brandAccent.header}dd 0%, transparent 100%)`" />
+            -->
 
             <!-- Header -->
             <div class="h-44 relative overflow-hidden">
@@ -295,7 +283,7 @@ const mapUrl = computed(() => {
             </div>
 
             <!-- Content -->
-            <div class="px-4 py-4 flex flex-col gap-2 flex-1 min-h-0 overflow-hidden">
+            <div class="relative z-10 px-4 py-4 flex flex-col gap-2 flex-1 min-h-0 overflow-hidden">
                 <!-- Name & Adresse -->
                 <div>
                     <h2 class="text-xl font-extrabold text-white">
@@ -377,14 +365,6 @@ const mapUrl = computed(() => {
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Share button -->
-            <div v-if="canShare && shareData" class="relative z-10 px-4 pb-4">
-                <button class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-yellow-500/30 hover:bg-white/25 active:bg-white/30 border border-white/25 text-white font-semibold text-sm transition-colors" @click.stop="share">
-                    <Share2 class="w-4 h-4" />
-                    Teilen
-                </button>
             </div>
 
             <!-- NEIN overlay -->
