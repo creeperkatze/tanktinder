@@ -11,6 +11,11 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         tankerkoenigApiKey: "",
+        public: {
+            posthogPublicKey: "phc_3xNgFbgJt7XXDcz3LY2nOdqeVvzW1vTXWgz3UMKxvEQ",
+            posthogHost: "https://eu.i.posthog.com",
+            posthogDefaults: "2026-01-30",
+        },
     },
 
     app: {

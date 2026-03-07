@@ -1,3 +1,5 @@
+import { capture } from '../utils/posthog'
+
 export interface Station {
   id: string
   name: string
@@ -30,8 +32,8 @@ export default defineEventHandler(async (event) => {
     const retryAfter = Math.ceil((blockedUntil - Date.now()) / 1000)
     throw createError({
       statusCode: 429,
-      message: `Rate limited – retry in ${retryAfter}s`,
-      data: { retryAfter },
+      message: `Rate limited, retry in ${retryAfter}s`,
+      data: { retryAfter }, 
     })
   }
 
@@ -68,8 +70,12 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!data.ok) {
-    throw createError({ statusCode: 502, message: data.message ?? 'Tankerkönig API Error' })
+    throw createError({ statusCode: 502, message: data.message ?? 'Tankerkönig API error' })
   }
 
-  return { ok: true, stations: data.stations ?? [] }
+  const stations = data.stations ?? []
+
+  capture('stations_fetched', { lat, lng, rad, station_count: stations.length }, String(getRequestIP(event) ?? 'server'))
+
+  return { ok: true, stations }
 })
