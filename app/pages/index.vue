@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Heart, X, RefreshCw, MapPin, Navigation, Flame, ChevronLeft, ChevronRight, Share2 } from "lucide-vue-next";
+import { Heart, X, RefreshCw, MapPin, Navigation, Share2 } from "lucide-vue-next";
 import type { Station, StationsApiResponse } from "~/types/station";
 import StationCard from "~/components/StationCard.vue";
 
@@ -185,7 +185,7 @@ const averagePrice = computed(() => {
 const desperationLevel = computed(() => {
     const avg = averagePrice.value;
     if (avg === null) return 0;
-    return Math.min(100, Math.max(0, ((avg - 1.4) / (2.3 - 1.4)) * 100));
+    return Math.min(100, Math.max(0, ((avg - 1.4) / (2.2 - 1.4)) * 100));
 });
 
 const desperationColor = computed(() => {
@@ -194,6 +194,23 @@ const desperationColor = computed(() => {
     if (lvl < 60) return "text-yellow-400";
     if (lvl < 80) return "text-orange-400";
     return "text-red-400";
+});
+
+const desperationBarColor = computed(() => {
+    const lvl = desperationLevel.value;
+    if (lvl < 30) return "#22c55e";
+    if (lvl < 60) return "#eab308";
+    if (lvl < 80) return "#f97316";
+    return "#ef4444";
+});
+
+const desperationLabel = computed(() => {
+    if (averagePrice.value === null) return "";
+    const lvl = desperationLevel.value;
+    if (lvl < 30) return "Günstig";
+    if (lvl < 60) return "Mittel";
+    if (lvl < 80) return "Teuer";
+    return "Sehr teuer";
 });
 
 // Share data helper
@@ -254,22 +271,25 @@ function mapsLink(station: Station) {
 
         <!-- Desperation Meter -->
         <div class="px-4 pb-2">
-            <div class="max-w-sm mx-auto bg-[#111118] rounded-2xl p-4 border border-white/5">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-1">
-                        <Flame class="w-4 h-4 text-gray-500 mb-0.5" />
-                        <span class="text-gray-500"> Durchschnitt im Umkreis </span>
+            <div class="max-w-sm mx-auto bg-[#111118] rounded-2xl border border-white/5 overflow-hidden">
+                <div class="px-4 pt-3 pb-2.5 flex items-center justify-between gap-4">
+                    <div>
+                        <p class="text-gray-600 text-sm uppercase tracking-widest leading-none">Ø Spritpreis Aktuell</p>
+                        <p class="mt-1 text-lg font-extrabold" :class="averagePrice !== null ? desperationColor : 'text-gray-700'">
+                            {{ desperationLabel || '-' }}
+                        </p>
                     </div>
-                    <span class="font-extrabold tabular-nums" :class="desperationColor">
-                        <template v-if="averagePrice !== null"> {{ averagePrice.toFixed(3).replace(".", ",") }} € </template>
+                    <span class="tabular-nums font-black leading-none" :class="averagePrice !== null ? desperationColor : 'text-gray-700'">
+                        <template v-if="averagePrice !== null">
+                            <span class="text-3xl">{{ averagePrice.toFixed(3).replace(".", ",") }}</span><span class="text-lg ml-0.5">€</span>
+                        </template>
                         <template v-else>
-                            <span class="text-gray-600">–</span>
+                            <span class="text-3xl">-</span>
                         </template>
                     </span>
                 </div>
-
-                <div class="h-1.5 bg-[#1a1a24] rounded-full overflow-hidden">
-                    <div class="h-full desperation-bar rounded-full transition-all duration-700" :style="{ width: `${desperationLevel}%` }" />
+                <div class="h-0.5 bg-[#0d0d14]">
+                    <div class="h-full transition-all duration-700" :style="{ width: `${desperationLevel}%`, backgroundColor: desperationBarColor }" />
                 </div>
             </div>
         </div>
