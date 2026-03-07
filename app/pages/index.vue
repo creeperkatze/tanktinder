@@ -294,6 +294,19 @@ function mapsLink(station: Station) {
                     </div>
                 </Transition>
 
+                <!-- No stations found -->
+                <Transition name="fade">
+                    <div v-if="!pending && !error && stations.length === 0" class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-4">
+                        <div class="text-6xl">🏜️</div>
+                        <h3 class="text-white font-bold text-xl">Keine Tankstellen gefunden.</h3>
+                        <p class="text-gray-400 text-sm max-w-xs leading-relaxed">In deiner Nähe wurden keine Tankstellen gefunden.</p>
+                        <button class="flex items-center gap-2 bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-500 hover:to-orange-400 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-full transition-all active:scale-95 text-sm" :disabled="rateLimitCountdown > 0" @click="doRefresh">
+                            <RefreshCw class="w-4 h-4" />
+                            {{ rateLimitCountdown > 0 ? `Warten (${rateLimitCountdown}s)` : "Neu laden" }}
+                        </button>
+                    </div>
+                </Transition>
+
                 <!-- Empty state -->
                 <Transition name="fade">
                     <div v-if="!pending && !error && !hasMoreCards && stations.length" class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-4">
