@@ -179,7 +179,7 @@ const brandDomains: Record<string, string> = {
     avia: "avia.de",
     agip: "agip.de",
     eni: "eni.com",
-    orlen: "orlen.de",
+    orlen: "orlen-deutschland.de",
     star: "star.de",
     hem: "hem-tankstelle.de",
     hoyer: "hoyer.de",
