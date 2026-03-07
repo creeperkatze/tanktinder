@@ -171,23 +171,26 @@ const desperationColor = computed(() => {
 
 // Share data helper
 function stationShareData(station: Station) {
-    const fmt = (p: number | false) => typeof p === "number" ? p.toFixed(3).replace(".", ",") + " €" : null;
-    const prices = [
-        station.e5 !== false && `Super: ${fmt(station.e5)}`,
-        station.e10 !== false && `Super E10: ${fmt(station.e10)}`,
-        station.diesel !== false && `Diesel: ${fmt(station.diesel)}`,
-    ].filter(Boolean).join(" · ");
+    const fmt = (p: number | false) => (typeof p === "number" ? p.toFixed(3).replace(".", ",") + " €" : null);
+    const prices = [station.e5 !== false && `Super: ${fmt(station.e5)}`, station.e10 !== false && `Super E10: ${fmt(station.e10)}`, station.diesel !== false && `Diesel: ${fmt(station.diesel)}`].filter(Boolean).join(" · ");
 
-    const primary = typeof station.e5 === "number" ? station.e5
-        : typeof station.e10 === "number" ? station.e10
-        : typeof station.diesel === "number" ? station.diesel : null;
+    const primary = typeof station.e5 === "number" ? station.e5 : typeof station.e10 === "number" ? station.e10 : typeof station.diesel === "number" ? station.diesel : null;
     const avg = averagePrice.value;
     const diff = primary !== null && avg !== null ? Math.round((primary - avg) * 100) : null;
     const tag = diff === null ? "" : diff <= -5 ? `-${Math.abs(diff)} ct` : diff >= 5 ? `+${diff} ct` : `±0 ct`;
 
     return {
         title: `${station.brand} in ${station.place}${tag ? ` (${tag})` : ""}`,
-        text: `${station.name}, ${station.street} ${station.houseNumber}, ${station.postCode} ${station.place}\n💸${prices}\n🗺️ ${mapsLink(station)}`,
+        text: `${station.name}, ${station.street} ${station.houseNumber}, ${station.postCode} ${station.place}
+        \n
+        \n
+        💸${prices}
+        \n
+        \n
+        🗺️ ${mapsLink(station)}
+        \n
+        \n
+        `,
         url: window.location.origin,
     };
 }
@@ -287,7 +290,7 @@ function mapsLink(station: Station) {
                         </p>
                         <button class="flex items-center gap-2 bg-pink-600 hover:bg-pink-500 disabled:opacity-50 text-white px-4 py-2 rounded-full transition-colors text-sm" :disabled="rateLimitCountdown > 0" @click="doRefresh">
                             <RefreshCw class="w-4 h-4" />
-                            {{ rateLimitCountdown > 0 ? `Warten (${rateLimitCountdown}s)` : 'Erneut versuchen' }}
+                            {{ rateLimitCountdown > 0 ? `Warten (${rateLimitCountdown}s)` : "Erneut versuchen" }}
                         </button>
                     </div>
                 </Transition>
@@ -302,7 +305,7 @@ function mapsLink(station: Station) {
                         </p>
                         <button class="flex items-center gap-2 bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-500 hover:to-orange-400 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-full transition-all active:scale-95 text-sm" :disabled="rateLimitCountdown > 0" @click="doRefresh">
                             <RefreshCw class="w-4 h-4" />
-                            {{ rateLimitCountdown > 0 ? `Warten (${rateLimitCountdown}s)` : 'Neu laden' }}
+                            {{ rateLimitCountdown > 0 ? `Warten (${rateLimitCountdown}s)` : "Neu laden" }}
                         </button>
                     </div>
                 </Transition>
@@ -357,7 +360,7 @@ function mapsLink(station: Station) {
                 <!-- Backdrop blur layer -->
                 <div class="fixed inset-0 bg-black/75 backdrop-blur-lg" @click="dismissMatch" />
                 <!-- Backdrop red accent on top -->
-                <div class="fixed inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 0%, rgba(220,38,38,0.3) 0%, transparent 60%)" />
+                <div class="fixed inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 0%, rgba(220, 38, 38, 0.3) 0%, transparent 60%)" />
 
                 <!-- Content -->
                 <div class="relative flex flex-col items-center gap-4 px-4 py-8 min-h-full justify-center">
