@@ -147,7 +147,7 @@ function mapsLink(station: Station) {
 <template>
     <div class="min-h-screen bg-[#0a0a0f] flex flex-col select-none">
         <!-- Header -->
-        <header class="relative z-20 px-4 pt-4 pb-3">
+        <header class="relative z-20 px-4 pt-4">
             <div class="max-w-sm mx-auto">
                 <div
                     class="text-center mb-3 cursor-pointer"
@@ -169,7 +169,7 @@ function mapsLink(station: Station) {
         </header>
 
         <!-- Desperation Meter -->
-        <div class="px-6 pb-3 z-20">
+        <div class="px-4 pb-2">
             <div class="max-w-sm mx-auto bg-[#111118] rounded-2xl p-4 border border-white/5">
                 <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center gap-1">
@@ -191,7 +191,7 @@ function mapsLink(station: Station) {
         </div>
 
         <!-- Card Stack -->
-        <div class="relative flex flex-col items-center justify-start px-6 overflow-x-hidden">
+        <div class="relative flex flex-col items-center justify-start px-4 overflow-x-hidden">
             <div class="relative w-full" style="height: 560px; max-width: 420px">
                 <!-- Geolocation pending -->
                 <Transition name="fade">
@@ -274,7 +274,7 @@ function mapsLink(station: Station) {
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex items-center justify-center gap-6 mt-4 pb-8">
+            <div class="flex items-center justify-center gap-6 pb-8">
                 <!-- Reject -->
                 <button class="w-16 h-16 rounded-full bg-[#111118] border border-white/10 flex items-center justify-center shadow-xl hover:border-red-500/50 hover:bg-red-500/10 active:scale-95 transition-all group disabled:opacity-30" :disabled="!hasMoreCards || pending" @click="swipeLeftButton">
                     <X class="w-7 h-7 text-red-400 group-hover:text-red-300 transition-colors" />

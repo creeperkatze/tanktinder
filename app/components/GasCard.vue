@@ -303,36 +303,36 @@ const mapUrl = computed(() => {
                 <!-- Preise -->
                 <div class="grid grid-cols-3 gap-2">
                     <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-emerald-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-sm mb-1.5">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
                             <Flame class="w-4 h-4" />
-                            <span>Super</span>
+                            <span>E5</span>
                         </div>
                         <div class="rounded-lg py-1 px-2 bg-black/20">
-                            <div class="text-xl font-extrabold tabular-nums" :class="priceColor(station.e5)">
+                            <div class="text-lg font-extrabold tabular-nums" :class="priceColor(station.e5)">
                                 {{ formatPrice(station.e5) }}
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-blue-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-sm mb-1.5">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
                             <Zap class="w-4 h-4" />
-                            <span>Super E10</span>
+                            <span>E10</span>
                         </div>
                         <div class="rounded-lg py-1 px-2 bg-black/20">
-                            <div class="text-xl font-extrabold tabular-nums" :class="priceColor(station.e10)">
+                            <div class="text-lg font-extrabold tabular-nums" :class="priceColor(station.e10)">
                                 {{ formatPrice(station.e10) }}
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-yellow-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-sm mb-1.5">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
                             <Fuel class="w-4 h-4" />
                             <span>Diesel</span>
                         </div>
                         <div class="rounded-lg py-1 px-2 bg-black/20">
-                            <div class="text-xl font-extrabold tabular-nums" :class="priceColor(station.diesel)">
+                            <div class="text-lg font-extrabold tabular-nums" :class="priceColor(station.diesel)">
                                 {{ formatPrice(station.diesel) }}
                             </div>
                         </div>
