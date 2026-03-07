@@ -15,6 +15,8 @@ export interface Station {
   isOpen: boolean
 }
 
+let blockedUntil: number | null = null;
+
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const config = useRuntimeConfig(event)
@@ -22,6 +24,15 @@ export default defineEventHandler(async (event) => {
 
   if (!apiKey) {
     throw createError({ statusCode: 503, message: 'No API key configured' })
+  }
+
+  if (blockedUntil !== null && Date.now() < blockedUntil) {
+    const retryAfter = Math.ceil((blockedUntil - Date.now()) / 1000)
+    throw createError({
+      statusCode: 429,
+      message: `Rate limited – retry in ${retryAfter}s`,
+      data: { retryAfter },
+    })
   }
 
   const lat = String(query.lat)
@@ -36,11 +47,25 @@ export default defineEventHandler(async (event) => {
   url.searchParams.set('sort', 'dist')
   url.searchParams.set('apikey', apiKey)
 
-  const data = await $fetch<{
-    ok: boolean
-    stations: Station[]
-    message?: string
-  }>(url.toString(), { timeout: 15_000 })
+  let data: { ok: boolean; stations: Station[]; message?: string }
+  try {
+    data = await $fetch<{
+      ok: boolean
+      stations: Station[]
+      message?: string
+    }>(url.toString(), { timeout: 15_000, retry: 0 })
+  } catch (err: any) {
+    const status = err?.response?.status ?? err?.statusCode ?? 502
+    if (status === 503) {
+      blockedUntil = Date.now() + 60_000
+      throw createError({
+        statusCode: 429,
+        message: 'Tankerkönig API returned rate limit request',
+        data: { retryAfter: 60 },
+      })
+    }
+    throw createError({ statusCode: 502, message: `Tankerkönig API error (${status})` })
+  }
 
   if (!data.ok) {
     throw createError({ statusCode: 502, message: data.message ?? 'Tankerkönig API Error' })

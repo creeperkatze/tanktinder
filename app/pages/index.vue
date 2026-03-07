@@ -49,6 +49,34 @@ const visibleCards = computed(() => [0, 1, 2].map((offset) => ({ station: statio
 
 const hasMoreCards = computed(() => currentIndex.value < stations.value.length);
 
+const rateLimitCountdown = ref(0);
+let rateLimitTimer: ReturnType<typeof setInterval> | null = null;
+
+function startCountdown(seconds: number) {
+    if (rateLimitTimer) clearInterval(rateLimitTimer);
+    rateLimitCountdown.value = seconds;
+    rateLimitTimer = setInterval(() => {
+        rateLimitCountdown.value = Math.max(0, rateLimitCountdown.value - 1);
+        if (rateLimitCountdown.value === 0) clearInterval(rateLimitTimer!);
+    }, 1_000);
+}
+
+// Start countdown when server returns 429 with retryAfter
+watch(error, (e) => {
+    const retryAfter: number | undefined = (e as any)?.data?.retryAfter;
+    if (typeof retryAfter === "number" && retryAfter > 0) startCountdown(retryAfter);
+});
+
+function doFetch() {
+    if (rateLimitCountdown.value > 0) return;
+    execute();
+}
+
+function doRefresh() {
+    if (rateLimitCountdown.value > 0) return;
+    refresh();
+}
+
 // Geolocation
 function detectLocation() {
     if (USE_MOCK) return;
@@ -65,7 +93,7 @@ function detectLocation() {
             fetchLng.value = pos.coords.longitude.toFixed(6);
             locationGranted.value = true;
             locationPending.value = false;
-            execute();
+            doFetch();
         },
         () => {
             locationPending.value = false;
@@ -76,6 +104,10 @@ function detectLocation() {
 
 onMounted(() => {
     if (!USE_MOCK) detectLocation();
+});
+
+onUnmounted(() => {
+    if (rateLimitTimer) clearInterval(rateLimitTimer);
 });
 
 // Swipe Logic
@@ -230,9 +262,9 @@ function mapsLink(station: Station) {
                         <p class="text-gray-400 text-sm">
                             {{ error.message }}
                         </p>
-                        <button class="flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white px-4 py-2 rounded-full transition-colors text-sm" @click="() => refresh()">
+                        <button class="flex items-center gap-2 bg-pink-600 hover:bg-pink-500 disabled:opacity-50 text-white px-4 py-2 rounded-full transition-colors text-sm" :disabled="rateLimitCountdown > 0" @click="doRefresh">
                             <RefreshCw class="w-4 h-4" />
-                            Erneut versuchen
+                            {{ rateLimitCountdown > 0 ? `Warten (${rateLimitCountdown}s)` : 'Erneut versuchen' }}
                         </button>
                     </div>
                 </Transition>
@@ -245,9 +277,9 @@ function mapsLink(station: Station) {
                         <p class="text-gray-400 text-sm max-w-xs leading-relaxed">
                             <strong class="text-white">{{ rejectedCount }}</strong> von {{ swipeCount }} abgelehnt.
                         </p>
-                        <button class="flex items-center gap-2 bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-500 hover:to-orange-400 text-white font-semibold px-6 py-3 rounded-full transition-all active:scale-95 text-sm" @click="() => refresh()">
+                        <button class="flex items-center gap-2 bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-500 hover:to-orange-400 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-full transition-all active:scale-95 text-sm" :disabled="rateLimitCountdown > 0" @click="doRefresh">
                             <RefreshCw class="w-4 h-4" />
-                            Neu laden
+                            {{ rateLimitCountdown > 0 ? `Warten (${rateLimitCountdown}s)` : 'Neu laden' }}
                         </button>
                     </div>
                 </Transition>
@@ -298,8 +330,10 @@ function mapsLink(station: Station) {
 
         <Transition name="match">
             <div v-if="showMatchOverlay && matchedStation" class="fixed inset-0 z-50 overflow-y-auto" @click.self="dismissMatch">
-                <!-- Backdrop -->
-                <div class="absolute inset-0 backdrop-blur-lg" style="background: radial-gradient(ellipse at 50% 0%, rgba(220, 38, 38, 0.35) 0%, rgba(0, 0, 0, 0.88) 70%)" @click="dismissMatch" />
+                <!-- Backdrop blur layer -->
+                <div class="fixed inset-0 bg-black/75 backdrop-blur-lg" @click="dismissMatch" />
+                <!-- Backdrop red accent on top -->
+                <div class="fixed inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 0%, rgba(220,38,38,0.3) 0%, transparent 60%)" />
 
                 <!-- Content -->
                 <div class="relative flex flex-col items-center gap-4 px-4 py-8 min-h-full justify-center">
