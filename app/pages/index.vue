@@ -296,7 +296,7 @@ function mapsLink(station: Station) {
 
                 <!-- No stations found -->
                 <Transition name="fade">
-                    <div v-if="!pending && !error && stations.length === 0" class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-4">
+                    <div v-if="!pending && !error && data && stations.length === 0" class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-4">
                         <div class="text-6xl">🏜️</div>
                         <h3 class="text-white font-bold text-xl">Keine Tankstellen gefunden.</h3>
                         <p class="text-gray-400 text-sm max-w-xs leading-relaxed">In deiner Nähe wurden keine Tankstellen gefunden.</p>
