@@ -1,13 +1,13 @@
 import { PostHog } from 'posthog-node'
 
-let _ph: PostHog | null = null
+let posthog: PostHog | null = null
 
 function getPostHog(): PostHog {
-  if (!_ph) {
+  if (!posthog) {
     const config = useRuntimeConfig()
-    _ph = new PostHog(String(config.public.posthogPublicKey), { host: String(config.public.posthogHost) })
+    posthog = new PostHog(String(config.public.posthogPublicKey), { host: String(config.public.posthogHost) })
   }
-  return _ph
+  return posthog
 }
 
 export function capture(event: string, properties?: Record<string, unknown>, distinctId = 'server') {

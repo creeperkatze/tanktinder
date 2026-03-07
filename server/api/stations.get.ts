@@ -75,7 +75,8 @@ export default defineEventHandler(async (event) => {
 
   const stations = data.stations ?? []
 
-  capture('stations_fetched', { lat, lng, rad, station_count: stations.length }, String(getRequestIP(event) ?? 'server'))
+  const ip = String(getRequestIP(event) ?? 'server')
+  capture('stations_fetched', { $ip: ip, lat, lng, rad, station_count: stations.length }, ip)
 
   return { ok: true, stations }
 })
