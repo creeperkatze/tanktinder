@@ -240,7 +240,7 @@ function mapsLink(station: Station) {
 
         <!-- Card Stack -->
         <div class="relative flex flex-col items-center justify-start px-4 overflow-x-hidden">
-            <div class="relative w-full" style="max-width: 420px; min-height: 560px">
+            <div class="relative w-full" style="max-width: 420px; min-height: 460px">
                 <!-- Geolocation pending -->
                 <Transition name="fade">
                     <div v-if="locationPending" class="absolute inset-0 flex flex-col items-center justify-center gap-4">
