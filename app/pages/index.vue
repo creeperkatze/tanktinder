@@ -195,7 +195,7 @@ function mapsLink(station: Station) {
                         <img class="w-8 h-8" src="/favicon.svg" />
                         <span class="text-red-500 font-extrabold">TankTinder</span>
                     </h1>
-                    <p class="text-gray-500 mt-1 tracking-wide">Finde Tankstellen in deiner Nähe</p>
+                    <p class="text-gray-500 mt-1 tracking-wide">Finde niedrige Spritpreise in deiner Nähe</p>
                 </div>
             </div>
         </header>
@@ -340,8 +340,8 @@ function mapsLink(station: Station) {
                     <!-- Header -->
                     <div class="text-center">
                         <div class="text-5xl mb-2">💸</div>
-                        <h2 class="text-3xl font-black text-white mb-1">It's a Match!</h2>
-                        <p class="text-gray-400 text-sm">Du hast diese Tankstelle ausgewählt</p>
+                        <h2 class="text-3xl font-black text-white mb-1">Match!</h2>
+                        <p class="text-gray-400 text-sm">Du hast eine Tankstelle gefunden</p>
                     </div>
 
                     <!-- Card + CTAs container -->
