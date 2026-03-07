@@ -12,7 +12,7 @@ export default defineNuxtConfig({
         tankerkoenigApiKey: "",
         public: {
             posthogPublicKey: "phc_3xNgFbgJt7XXDcz3LY2nOdqeVvzW1vTXWgz3UMKxvEQ",
-            posthogHost: "https://eu.i.posthog.com",
+            posthogHost: "https://hedgehog.creeperkatze.de/",
             posthogDefaults: "2026-01-30",
         },
     },
