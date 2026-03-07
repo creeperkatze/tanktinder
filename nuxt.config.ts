@@ -1,4 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     compatibilityDate: "2025-07-15",
     devtools: { enabled: true },
@@ -25,7 +24,7 @@ export default defineNuxtConfig({
             meta: [
                 {
                     name: "description",
-                    content: "Tinder für Tankstellen. Tankstellen in deiner Nähe warte auf dich!",
+                    content: "Tinder für Tankstellen. Tankstellen in deiner Nähe warten auf dich!",
                 },
                 {
                     property: "og:title",
@@ -33,7 +32,7 @@ export default defineNuxtConfig({
                 },
                 {
                     property: "og:description",
-                    content: "Tinder für Tankstellen. Tankstellen in deiner Nähe warte auf dich!",
+                    content: "Tinder für Tankstellen. Tankstellen in deiner Nähe warten auf dich!",
                 },
             ],
             link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
