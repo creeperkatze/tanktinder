@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Heart, X, RefreshCw, MapPin, Navigation, Flame, Undo2, Redo2 } from "lucide-vue-next";
+import { Heart, X, RefreshCw, MapPin, Navigation, Flame, ChevronLeft, ChevronRight } from "lucide-vue-next";
 import type { Station, StationsApiResponse } from "~/types/station";
 import GasCard from "~/components/GasCard.vue";
 
@@ -142,7 +142,6 @@ function mapsLink(station: Station) {
     const q = encodeURIComponent(`${station.name}, ${station.street} ${station.houseNumber}, ${station.postCode} ${station.place}`);
     return `https://www.google.com/maps/search/?api=1&query=${q}`;
 }
-
 </script>
 
 <template>
@@ -150,14 +149,22 @@ function mapsLink(station: Station) {
         <!-- Header -->
         <header class="relative z-20 px-4 pt-4 pb-3">
             <div class="max-w-sm mx-auto">
-                <div class="text-center mb-3 cursor-pointer" @click="() => { currentIndex = 0; swipeCount = 0; rejectedCount = 0; }">
+                <div
+                    class="text-center mb-3 cursor-pointer"
+                    @click="
+                        () => {
+                            currentIndex = 0;
+                            swipeCount = 0;
+                            rejectedCount = 0;
+                        }
+                    "
+                >
                     <h1 class="flex items-center justify-center gap-2 text-4xl tracking-tighter">
                         <img class="w-8 h-8" src="/favicon.svg" />
                         <span class="text-red-500 font-extrabold">TankTinder</span>
                     </h1>
                     <p class="text-gray-500 mt-1 tracking-wide">Finde Tankstellen in deiner Nähe</p>
                 </div>
-
             </div>
         </header>
 
@@ -185,18 +192,6 @@ function mapsLink(station: Station) {
 
         <!-- Card Stack -->
         <div class="relative flex flex-col items-center justify-start px-6 overflow-x-hidden">
-            <!-- Swipe hints -->
-            <div v-if="hasMoreCards" class="absolute inset-x-0 flex justify-between items-center px-2 pointer-events-none z-0" style="top: 220px">
-                <div class="flex flex-col items-center gap-1 text-red-900/60">
-                    <Undo2 class="w-6 h-6" />
-                    <span class="text-xs font-bold uppercase tracking-widest">Nein</span>
-                </div>
-                <div class="flex flex-col items-center gap-1 text-emerald-900/60">
-                    <Redo2 class="w-6 h-6" />
-                    <span class="text-xs font-bold uppercase tracking-widest">Ja</span>
-                </div>
-            </div>
-
             <div class="relative w-full" style="height: 560px; max-width: 420px">
                 <!-- Geolocation pending -->
                 <Transition name="fade">
@@ -262,7 +257,12 @@ function mapsLink(station: Station) {
                     <GasCard
                         v-for="{ station, offset } in [...visibleCards].reverse()"
                         :key="station.id"
-                        :ref="(el) => { if (el) cardRefs[station.id] = el as InstanceType<typeof GasCard>; else delete cardRefs[station.id]; }"
+                        :ref="
+                            (el) => {
+                                if (el) cardRefs[station.id] = el as InstanceType<typeof GasCard>;
+                                else delete cardRefs[station.id];
+                            }
+                        "
                         :station="station"
                         :is-top="offset === 0"
                         :stack-offset="offset"
@@ -299,7 +299,7 @@ function mapsLink(station: Station) {
         <Transition name="match">
             <div v-if="showMatchOverlay && matchedStation" class="fixed inset-0 z-50 overflow-y-auto" @click.self="dismissMatch">
                 <!-- Backdrop -->
-                <div class="absolute inset-0 backdrop-blur-lg" style="background: radial-gradient(ellipse at 50% 0%, rgba(220,38,38,0.35) 0%, rgba(0,0,0,0.88) 70%)" @click="dismissMatch" />
+                <div class="absolute inset-0 backdrop-blur-lg" style="background: radial-gradient(ellipse at 50% 0%, rgba(220, 38, 38, 0.35) 0%, rgba(0, 0, 0, 0.88) 70%)" @click="dismissMatch" />
 
                 <!-- Content -->
                 <div class="relative flex flex-col items-center gap-4 px-4 py-8 min-h-full justify-center">
@@ -311,17 +311,10 @@ function mapsLink(station: Station) {
                     </div>
 
                     <!-- Card + CTAs container -->
-                    <div class=" border border-white/10 rounded-3xl p-4 w-full flex flex-col gap-4" style="max-width: 452px">
+                    <div class="border border-white/10 rounded-3xl p-4 w-full flex flex-col gap-4" style="max-width: 452px">
                         <!-- Reuse GasCard — non-interactive, shows map + all info -->
                         <div class="relative w-full" style="height: 540px">
-                            <GasCard
-                                :station="matchedStation"
-                                :is-top="false"
-                                :stack-offset="0"
-                                :area-average="averagePrice"
-                                @swipe-left="() => {}"
-                                @swipe-right="() => {}"
-                            />
+                            <GasCard :station="matchedStation" :is-top="false" :stack-offset="0" :area-average="averagePrice" @swipe-left="() => {}" @swipe-right="() => {}" />
                         </div>
 
                         <!-- CTAs -->

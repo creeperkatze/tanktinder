@@ -244,9 +244,8 @@ const mapUrl = computed(() => {
 <template>
     <div
         ref="cardRef"
-        class="absolute inset-x-0 mx-auto select-none touch-none"
+        class="absolute inset-x-0 select-none touch-none"
         :class="isTop ? 'cursor-grab active:cursor-grabbing z-10' : `pointer-events-none z-${10 - stackOffset}`"
-        style="width: min(420px, calc(100vw - 2rem))"
         :style="{ transform: cardTransform, transition: cardTransition }"
         @pointerdown="onPointerDown"
         @pointermove="onPointerMove"
@@ -304,9 +303,9 @@ const mapUrl = computed(() => {
                 <!-- Preise -->
                 <div class="grid grid-cols-3 gap-2">
                     <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-emerald-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-sm mb-1.5">
                             <Flame class="w-4 h-4" />
-                            <span>E5</span>
+                            <span>Super</span>
                         </div>
                         <div class="rounded-lg py-1 px-2 bg-black/20">
                             <div class="text-xl font-extrabold tabular-nums" :class="priceColor(station.e5)">
@@ -315,10 +314,10 @@ const mapUrl = computed(() => {
                         </div>
                     </div>
 
-                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-teal-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
+                    <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-blue-900/60">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-sm mb-1.5">
                             <Zap class="w-4 h-4" />
-                            <span>E10</span>
+                            <span>Super E10</span>
                         </div>
                         <div class="rounded-lg py-1 px-2 bg-black/20">
                             <div class="text-xl font-extrabold tabular-nums" :class="priceColor(station.e10)">
@@ -328,7 +327,7 @@ const mapUrl = computed(() => {
                     </div>
 
                     <div class="bg-[#1a1a24] rounded-xl p-3 text-center border border-yellow-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1.5">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-sm mb-1.5">
                             <Fuel class="w-4 h-4" />
                             <span>Diesel</span>
                         </div>
