@@ -16,6 +16,7 @@ const emit = defineEmits<{
 
 // Drag State
 const cardRef = ref<HTMLElement | null>(null);
+const pendingDrag = ref(false);
 const isDragging = ref(false);
 const startX = ref(0);
 const startY = ref(0);
@@ -55,21 +56,34 @@ const cardTransition = computed(() => {
 // Pointer Events
 function onPointerDown(e: PointerEvent) {
     if (!props.isTop || isFlying.value) return;
-    isDragging.value = true;
+    pendingDrag.value = true;
     startX.value = e.clientX;
     startY.value = e.clientY;
     currentX.value = e.clientX;
     currentY.value = e.clientY;
-    cardRef.value?.setPointerCapture(e.pointerId);
 }
 
 function onPointerMove(e: PointerEvent) {
-    if (!isDragging.value) return;
+    if (!pendingDrag.value && !isDragging.value) return;
+    const dx = Math.abs(e.clientX - startX.value);
+    const dy = Math.abs(e.clientY - startY.value);
+    if (!isDragging.value) {
+        if (dx < 6 && dy < 6) return;
+        if (dy >= dx) {
+            pendingDrag.value = false; // vertical
+            return;
+        }
+        // horizontal
+        pendingDrag.value = false;
+        isDragging.value = true;
+        cardRef.value?.setPointerCapture(e.pointerId);
+    }
     currentX.value = e.clientX;
     currentY.value = e.clientY;
 }
 
 function onPointerUp() {
+    pendingDrag.value = false;
     if (!isDragging.value) return;
     isDragging.value = false;
     if (offsetX.value > SWIPE_THRESHOLD) triggerSwipe("right");
@@ -244,7 +258,7 @@ const mapUrl = computed(() => {
 <template>
     <div
         ref="cardRef"
-        class="absolute inset-x-0 select-none touch-none"
+        class="absolute inset-x-0 select-none touch-pan-y"
         :class="isTop ? 'cursor-grab active:cursor-grabbing z-10' : `pointer-events-none z-${10 - stackOffset}`"
         :style="{ transform: cardTransform, transition: cardTransition }"
         @pointerdown="onPointerDown"
