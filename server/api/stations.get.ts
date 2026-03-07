@@ -97,9 +97,9 @@ function arrangeStations(list: Station[]): Station[] {
   // Keep natural distance order, but ensure cheapest is within first 10 and not at 0 or 1
   const result = [...list]
   const bestIdx = result.reduce((bi, s, i) => getPrice(s) < getPrice(result[bi]!) ? i : bi, 0)
-  const targetIdx = Math.min(3 + Math.floor(Math.random() * 4), result.length - 1)
+  const targetIdx = Math.min(2 + Math.floor(Math.random() * 3), result.length - 1)
 
-  if (bestIdx <= 1 || bestIdx > 9) {
+  if (bestIdx <= 1 || bestIdx > 4) {
     const [best] = result.splice(bestIdx, 1)
     result.splice(targetIdx, 0, best!)
   }
