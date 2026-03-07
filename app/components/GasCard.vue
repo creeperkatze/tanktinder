@@ -27,13 +27,13 @@ const currentY = ref(0);
 const isFlying = ref(false);
 const flyDirection = ref<"left" | "right" | null>(null);
 
-const SWIPE_THRESHOLD = 110;
+const SWIPE_THRESHOLD = 120;
 
 const offsetX = computed(() => currentX.value - startX.value);
 const offsetY = computed(() => currentY.value - startY.value);
 const rotation = computed(() => offsetX.value * 0.07);
-const nopeOpacity = computed(() => Math.max(0, Math.min(1, -offsetX.value / SWIPE_THRESHOLD)));
-const likeOpacity = computed(() => Math.max(0, Math.min(1, offsetX.value / SWIPE_THRESHOLD)));
+const nopeOpacity = computed(() => Math.max(0, Math.min(1, -offsetX.value / (SWIPE_THRESHOLD * 0.4))));
+const likeOpacity = computed(() => Math.max(0, Math.min(1, offsetX.value / (SWIPE_THRESHOLD * 0.4))));
 
 const stackScale = computed(() => 1 - props.stackOffset * 0.04);
 const stackTranslateY = computed(() => props.stackOffset * 14);
