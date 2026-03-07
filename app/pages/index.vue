@@ -102,6 +102,33 @@ function detectLocation() {
     );
 }
 
+const ipLocationPending = ref(false);
+const ipLocationError = ref(false);
+
+async function useIpLocation() {
+    if (USE_MOCK) return;
+    ipLocationPending.value = true;
+    ipLocationError.value = false;
+    locationDenied.value = false;
+    locationPending.value = true;
+    try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        if (!data.latitude || !data.longitude) throw new Error();
+        fetchLat.value = String(data.latitude);
+        fetchLng.value = String(data.longitude);
+        locationGranted.value = true;
+        locationPending.value = false;
+        doFetch();
+    } catch {
+        locationPending.value = false;
+        locationDenied.value = true;
+        ipLocationError.value = true;
+    } finally {
+        ipLocationPending.value = false;
+    }
+}
+
 onMounted(() => {
     if (!USE_MOCK) detectLocation();
 });
@@ -263,9 +290,14 @@ function mapsLink(station: Station) {
                     <div v-if="locationDenied && !locationPending" class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-4">
                         <MapPin class="w-10 h-10 text-red-400" />
                         <h3 class="text-white font-extrabold text-xl">Standort nicht verfügbar</h3>
-                        <p class="text-gray-400 text-sm max-w-xs">Bitte Standortzugriff erlauben und erneut versuchen.</p>
-                        <button class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full transition-colors text-sm" @click="detectLocation">
+                        <p class="text-gray-400 text-sm max-w-xs">Bitte Standortzugriff erlauben und erneut versuchen</p>
+                        <button class="flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-bold px-6 py-3 rounded-full transition-all active:scale-95 text-sm shadow-lg shadow-red-900/40" @click="useIpLocation">
                             <MapPin class="w-4 h-4" />
+                            Ungefähren Standort nutzen
+                        </button>
+                        <p v-if="ipLocationError" class="text-red-400 text-xs">IP-Standort konnte nicht ermittelt werden</p>
+                        <button class="flex items-center gap-1.5 text-gray-600 hover:text-gray-400 transition-colors text-xs" @click="detectLocation">
+                            <RefreshCw class="w-3 h-3" />
                             Erneut versuchen
                         </button>
                     </div>
