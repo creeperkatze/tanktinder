@@ -286,12 +286,12 @@ const mapUrl = computed(() => {
             <div class="relative z-10 px-4 py-4 flex flex-col gap-2 flex-1 min-h-0 overflow-hidden">
                 <!-- Name & Adresse -->
                 <div>
-                    <h2 class="text-xl font-extrabold text-white">
+                    <h2 class="text-xl font-extrabold text-white truncate">
                         {{ station.name }}
                     </h2>
-                    <p class="text-gray-500 mt-0.5 flex items-center gap-1.5">
+                    <p class="text-gray-500 mt-0.5 flex items-center gap-1.5 min-w-0">
                         <MapPin class="w-3.5 h-3.5 shrink-0" />
-                        {{ station.street }} {{ station.houseNumber }}, {{ station.postCode }} {{ station.place }}
+                        <span class="truncate">{{ station.street }} {{ station.houseNumber }}, {{ station.postCode }} {{ station.place }}</span>
                     </p>
                 </div>
 
