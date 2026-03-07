@@ -92,39 +92,16 @@ function getPrice(s: Station): number {
 }
 
 function arrangeStations(list: Station[]): Station[] {
-  if (list.length <= 2) return [...list].sort((a, b) => getPrice(a) - getPrice(b))
+  if (list.length <= 3) return list
 
-  const sorted = [...list].sort((a, b) => getPrice(a) - getPrice(b))
-  const topCount = Math.max(1, Math.ceil(sorted.length * 0.28))
-  const top = sorted.slice(0, topCount)
-  const rest = sorted.slice(topCount).reverse()
+  // Keep natural distance order, but ensure cheapest is within first 10 and not at 0 or 1
+  const result = [...list]
+  const bestIdx = result.reduce((bi, s, i) => getPrice(s) < getPrice(result[bi]!) ? i : bi, 0)
+  const targetIdx = Math.min(3 + Math.floor(Math.random() * 4), result.length - 1)
 
-  const n = sorted.length
-  const topSlots = new Set<number>()
-  topSlots.add(Math.min(3, n - 1))
-
-  const extra = top.length - 1
-  if (extra > 0) {
-    const lo = Math.min(5, n - 1)
-    const hi = Math.min(9, n - 1)
-    for (let i = 0; i < extra; i++) {
-      let idx = extra === 1 ? lo : Math.round(lo + (i / (extra - 1)) * (hi - lo))
-      idx = Math.min(idx, n - 1)
-      while (topSlots.has(idx) && idx < n - 1) idx++
-      topSlots.add(idx)
-    }
-  }
-
-  const sortedSlots = [...topSlots].sort((a, b) => a - b)
-  const result: Station[] = []
-  let ti = 0, ri = 0
-
-  for (let i = 0; i < n; i++) {
-    if (sortedSlots[ti] === i) {
-      result.push(top[ti++]!)
-    } else {
-      result.push(rest[ri++]!)
-    }
+  if (bestIdx <= 1 || bestIdx > 9) {
+    const [best] = result.splice(bestIdx, 1)
+    result.splice(targetIdx, 0, best!)
   }
 
   return result
