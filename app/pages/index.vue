@@ -181,7 +181,7 @@ function stationShareData(station: Station) {
 
     return {
         title: `Ich hab günstigen Sprit gefunden! ⛽`,
-        text: `Mit TankTinder hab ich ${station.brand} in ${station.place} gefunden${tag ? ` (${tag} Schnitt)` : ""}!\n\n💸 ${prices}\n🗺️ ${mapsLink(station)}\n\n👉 Selbst ausprobieren: ${window.location.origin}`,
+        text: `⛽ Mit TankTinder hab ich ${station.brand} in ${station.place} gefunden${tag ? ` (${tag} Schnitt)` : ""}!\n\n💸\n${prices}\n\n🗺️ ${mapsLink(station)}\n\n👉 Selbst ausprobieren: ${window.location.origin}`,
     };
 }
 
