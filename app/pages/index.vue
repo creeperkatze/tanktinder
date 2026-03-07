@@ -181,7 +181,7 @@ function stationShareData(station: Station) {
 
     return {
         title: `${station.brand} in ${station.place}${tag ? ` (${tag})` : ""}`,
-        text: `${station.name}, ${station.street} ${station.houseNumber}, ${station.postCode} ${station.place}\n💸${prices}\n🗺️ ${mapsLink(station)}\n`,
+        text: `${station.name}, ${station.street} ${station.houseNumber}, ${station.postCode} ${station.place}\n\n💸${prices}\n\n🗺️ ${mapsLink(station)}\n\n`,
         url: window.location.origin,
     };
 }
