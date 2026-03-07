@@ -172,7 +172,7 @@ const desperationColor = computed(() => {
 // Share data helper
 function stationShareData(station: Station) {
     const fmt = (p: number | false) => (typeof p === "number" ? p.toFixed(3).replace(".", ",") + " €" : null);
-    const prices = [station.e5 !== false && `Super: ${fmt(station.e5)}`, station.e10 !== false && `Super E10: ${fmt(station.e10)}`, station.diesel !== false && `Diesel: ${fmt(station.diesel)}`].filter(Boolean).join("\n");
+    const prices = [typeof station.e5 === "number" && `Super: ${fmt(station.e5)}`, typeof station.e10 === "number" && `Super E10: ${fmt(station.e10)}`, typeof station.diesel === "number" && `Diesel: ${fmt(station.diesel)}`].filter(Boolean).join("\n");
 
     const primary = typeof station.e5 === "number" ? station.e5 : typeof station.e10 === "number" ? station.e10 : typeof station.diesel === "number" ? station.diesel : null;
     const avg = averagePrice.value;
