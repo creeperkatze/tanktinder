@@ -109,11 +109,15 @@ defineExpose({ triggerSwipe });
 
 // Web Share API
 const canShare = ref(false);
-onMounted(() => { canShare.value = !!navigator.share; });
+onMounted(() => {
+    canShare.value = !!navigator.share;
+});
 
 async function share() {
     if (!navigator.share || !props.shareData) return;
-    try { await navigator.share(props.shareData); } catch {}
+    try {
+        await navigator.share(props.shareData);
+    } catch {}
 }
 
 // Display helpers
@@ -166,21 +170,14 @@ function formatPrice(p: number | false | null | undefined): string {
 }
 
 function priceColor(p: number | false | null | undefined): string {
-    if (typeof p !== "number" || props.areaAverage === null) return "text-gray-500"
-    const diff = Math.round((p - props.areaAverage) * 100)
-    if (diff <= -5) return "text-emerald-400"
-    if (diff >= 5)  return "text-red-400"
-    return "text-white"
+    if (typeof p !== "number" || props.areaAverage === null) return "text-gray-500";
+    const diff = Math.round((p - props.areaAverage) * 100);
+    if (diff <= -5) return "text-emerald-400";
+    if (diff >= 5) return "text-red-400";
+    return "text-white";
 }
 
-const distanceLabel = computed(() => {
-    const d = props.station.dist ?? 0;
-    const dStr = d.toFixed(1);
-    if (d < 0.3) return `${dStr} km entfernt`;
-    if (d < 1.0) return `${dStr} km entfernt`;
-    if (d < 5.0) return `${dStr} km entfernt`;
-    return `${dStr} km entfernt`;
-});
+const distanceLabel = computed(() => `${(props.station.dist ?? 0).toFixed(1)} km`);
 
 const brandInitial = computed(() => (props.station.brand || props.station.name).charAt(0).toUpperCase());
 
@@ -203,7 +200,7 @@ const brandDomains: Record<string, string> = {
     neste: "neste.com",
     tamoil: "tamoil.de",
     vrplus: "vr-plus.de",
-    sprint: "go-sprint.de"
+    sprint: "go-sprint.de",
 };
 
 const logoError = ref(false);
@@ -261,27 +258,14 @@ const brandAccent = computed<BrandAccent>(() => {
 
 const mapUrl = computed(() => {
     const { lat, lng } = props.station;
-    const d = 0.004;
+    const d = 0.01;
     return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - d},${lat - d},${lng + d},${lat + d}&layer=mapnik&marker=${lat},${lng}`;
 });
 </script>
 
 <template>
-    <div
-        ref="cardRef"
-        class="select-none touch-pan-y absolute inset-x-0 top-0"
-        :class="isTop
-            ? 'cursor-grab active:cursor-grabbing z-10'
-            : inFlow
-                ? 'z-10'
-                : `pointer-events-none z-${10 - stackOffset}`"
-        :style="{ transform: cardTransform, transition: cardTransition }"
-        @pointerdown="onPointerDown"
-        @pointermove="onPointerMove"
-        @pointerup="onPointerUp"
-        @pointercancel="onPointerUp"
-    >
-        <div class="relative rounded-2xl overflow-hidden bg-[#111118] border border-white/[0.06]" style="height: 540px; box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7)">
+    <div ref="cardRef" class="select-none touch-pan-y absolute inset-x-0 top-0" :class="isTop ? 'cursor-grab active:cursor-grabbing z-10' : inFlow ? 'z-10' : `pointer-events-none z-${10 - stackOffset}`" :style="{ transform: cardTransform, transition: cardTransition }" @pointerdown="onPointerDown" @pointermove="onPointerMove" @pointerup="onPointerUp" @pointercancel="onPointerUp">
+        <div class="relative rounded-2xl overflow-hidden bg-[#111118] border border-white/[0.06] flex flex-col" style="height: 540px; box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7)">
             <!-- Brand color gradient at bottom -->
             <div class="absolute bottom-0 inset-x-0 h-28 pointer-events-none" :style="`background: linear-gradient(to top, ${brandAccent.header}dd 0%, transparent 100%)`" />
 
@@ -311,7 +295,7 @@ const mapUrl = computed(() => {
             </div>
 
             <!-- Content -->
-            <div class="px-4 py-4 flex flex-col gap-2">
+            <div class="px-4 py-4 flex flex-col gap-2 flex-1 min-h-0 overflow-hidden">
                 <!-- Name & Adresse -->
                 <div>
                     <h2 class="text-xl font-extrabold text-white">
@@ -332,36 +316,36 @@ const mapUrl = computed(() => {
                 <!-- Preise -->
                 <div class="grid grid-cols-3 gap-2">
                     <div class="bg-[#1a1a24] rounded-xl p-2 text-center border border-emerald-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-xs whitespace-nowrap mb-1">
                             <Flame class="w-4 h-4" />
                             <span>E5</span>
                         </div>
                         <div class="rounded-lg py-1 px-1 bg-black/20">
-                            <div class="text-lg font-extrabold tabular-nums" :class="priceColor(station.e5)">
+                            <div class="text-lg font-extrabold tabular-nums whitespace-nowrap" :class="priceColor(station.e5)">
                                 {{ formatPrice(station.e5) }}
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-[#1a1a24] rounded-xl p-2 text-center border border-blue-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-xs whitespace-nowrap mb-1">
                             <Zap class="w-4 h-4" />
                             <span>E10</span>
                         </div>
                         <div class="rounded-lg py-1 px-1 bg-black/20">
-                            <div class="text-lg font-extrabold tabular-nums" :class="priceColor(station.e10)">
+                            <div class="text-lg font-extrabold tabular-nums whitespace-nowrap" :class="priceColor(station.e10)">
                                 {{ formatPrice(station.e10) }}
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-[#1a1a24] rounded-xl p-2 text-center border border-yellow-900/60">
-                        <div class="flex items-center justify-center gap-1 text-gray-500 text-lg mb-1">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-xs whitespace-nowrap mb-1">
                             <Fuel class="w-4 h-4" />
                             <span>Diesel</span>
                         </div>
                         <div class="rounded-lg py-1 px-1 bg-black/20">
-                            <div class="text-lg font-extrabold tabular-nums" :class="priceColor(station.diesel)">
+                            <div class="text-lg font-extrabold tabular-nums whitespace-nowrap" :class="priceColor(station.diesel)">
                                 {{ formatPrice(station.diesel) }}
                             </div>
                         </div>
@@ -370,24 +354,34 @@ const mapUrl = computed(() => {
 
                 <!-- Entfernung + Durchschnitt -->
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-[#1a1a24] rounded-xl p-3 flex items-center gap-2 border border-white/5">
-                        <Clock class="w-4 h-4 text-gray-600 shrink-0" />
-                        <span class="text-gray-400">{{ distanceLabel }}</span>
+                    <div class="bg-[#1a1a24] rounded-xl p-2 text-center border border-white/5">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-xs whitespace-nowrap mb-1">
+                            <Clock class="w-4 h-4" />
+                            <span>Entfernung</span>
+                        </div>
+                        <div class="rounded-lg py-1 px-1 bg-black/20">
+                            <div class="text-lg font-extrabold tabular-nums text-white">
+                                {{ distanceLabel }}
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-[#1a1a24] rounded-xl p-3 flex items-center gap-2 border border-white/5">
-                        <Fuel class="w-4 h-4 text-gray-600 shrink-0" />
-                        <span class="text-gray-500">50 L</span>
-                        <span class="text-gray-300 ml-auto tabular-nums">{{ fillUpCost ?? "–" }}</span>
+                    <div class="bg-[#1a1a24] rounded-xl p-2 text-center border border-white/5">
+                        <div class="flex items-center justify-center gap-1 text-gray-500 text-xs whitespace-nowrap mb-1">
+                            <Fuel class="w-4 h-4" />
+                            <span>50 L</span>
+                        </div>
+                        <div class="rounded-lg py-1 px-1 bg-black/20">
+                            <div class="text-lg font-extrabold tabular-nums text-white">
+                                {{ fillUpCost ?? "-" }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Brand color gradient at bottom -->
-            <div class="bottom-0 inset-x-0 h-160 pointer-events-none" :style="`background: linear-gradient(to top, ${brandAccent.header}cc 0%, transparent 100%)`" />
-
             <!-- Share button -->
-            <div v-if="canShare && shareData" class="px-4 pb-4">
-                <button class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-yellow-500/20 hover:bg-white/25 active:bg-white/30 border border-white/25 text-white font-semibold text-sm transition-colors" @click.stop="share">
+            <div v-if="canShare && shareData" class="relative z-10 px-4 pb-4">
+                <button class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-yellow-500/30 hover:bg-white/25 active:bg-white/30 border border-white/25 text-white font-semibold text-sm transition-colors" @click.stop="share">
                     <Share2 class="w-4 h-4" />
                     Teilen
                 </button>
