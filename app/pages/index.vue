@@ -3,7 +3,7 @@ import { Heart, X, RefreshCw, MapPin, Navigation, Flame, ChevronLeft, ChevronRig
 import type { Station, StationsApiResponse } from "~/types/station";
 import GasCard from "~/components/GasCard.vue";
 
-const USE_MOCK = false;
+const USE_MOCK = true;
 
 const MOCK_STATIONS: Station[] = [
     { id: "1", name: "Aral Tankstelle", brand: "Aral", street: "Hauptstraße", houseNumber: "12", postCode: 10115, place: "Berlin", lat: 52.52, lng: 13.405, dist: 0.4, e5: 1.789, e10: 1.759, diesel: 1.689, isOpen: true },
@@ -169,6 +169,29 @@ const desperationColor = computed(() => {
     return "text-red-400";
 });
 
+// Share data helper
+function stationShareData(station: Station) {
+    const fmt = (p: number | false) => typeof p === "number" ? p.toFixed(3).replace(".", ",") + " €" : null;
+    const prices = [
+        station.e5 !== false && `Super: ${fmt(station.e5)}`,
+        station.e10 !== false && `Super E10: ${fmt(station.e10)}`,
+        station.diesel !== false && `Diesel: ${fmt(station.diesel)}`,
+    ].filter(Boolean).join(" · ");
+
+    const primary = typeof station.e5 === "number" ? station.e5
+        : typeof station.e10 === "number" ? station.e10
+        : typeof station.diesel === "number" ? station.diesel : null;
+    const avg = averagePrice.value;
+    const diff = primary !== null && avg !== null ? Math.round((primary - avg) * 100) : null;
+    const tag = diff === null ? "" : diff <= -5 ? `-${Math.abs(diff)} ct` : diff >= 5 ? `+${diff} ct` : `±0 ct`;
+
+    return {
+        title: `${station.brand} in ${station.place}${tag ? ` (${tag})` : ""}`,
+        text: `${station.name}, ${station.street} ${station.houseNumber}, ${station.postCode} ${station.place}\n💸${prices}\n🗺️ ${mapsLink(station)}`,
+        url: window.location.origin,
+    };
+}
+
 // Google Maps link helper
 function mapsLink(station: Station) {
     const q = encodeURIComponent(`${station.name}, ${station.street} ${station.houseNumber}, ${station.postCode} ${station.place}`);
@@ -299,6 +322,7 @@ function mapsLink(station: Station) {
                         :is-top="offset === 0"
                         :stack-offset="offset"
                         :area-average="averagePrice"
+                        :share-data="stationShareData(station)"
                         @swipe-left="handleSwipeLeft"
                         @swipe-right="handleSwipeRight"
                     />
@@ -348,7 +372,7 @@ function mapsLink(station: Station) {
                     <div class="border border-white/10 rounded-3xl p-4 w-full flex flex-col gap-4" style="max-width: 452px">
                         <!-- Reuse GasCard — non-interactive, shows map + all info -->
                         <div class="relative w-full" style="height: 540px">
-                            <GasCard :station="matchedStation" :is-top="false" :stack-offset="0" :area-average="averagePrice" @swipe-left="() => {}" @swipe-right="() => {}" />
+                            <GasCard :station="matchedStation" :is-top="false" :in-flow="true" :stack-offset="0" :area-average="averagePrice" :share-data="stationShareData(matchedStation)" @swipe-left="() => {}" @swipe-right="() => {}" />
                         </div>
 
                         <!-- CTAs -->

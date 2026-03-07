@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { MapPin, Clock, Fuel, Heart, X, Flame, Zap, TrendingDown, TrendingUp, Minus } from "lucide-vue-next";
+import { MapPin, Clock, Fuel, Heart, X, Flame, Zap, TrendingDown, TrendingUp, Minus, Share2 } from "lucide-vue-next";
 import type { Station } from "~/types/station";
 
 const props = defineProps<{
     station: Station;
     isTop: boolean;
+    inFlow?: boolean;
     stackOffset: number;
     areaAverage: number | null;
+    shareData?: { title?: string; text?: string; url?: string };
 }>();
 
 const emit = defineEmits<{
@@ -104,6 +106,15 @@ function triggerSwipe(direction: "left" | "right") {
 }
 
 defineExpose({ triggerSwipe });
+
+// Web Share API
+const canShare = ref(false);
+onMounted(() => { canShare.value = !!navigator.share; });
+
+async function share() {
+    if (!navigator.share || !props.shareData) return;
+    try { await navigator.share(props.shareData); } catch {}
+}
 
 // Display helpers
 const primaryPrice = computed<number | null>(() => {
@@ -258,8 +269,10 @@ const mapUrl = computed(() => {
 <template>
     <div
         ref="cardRef"
-        class="absolute inset-x-0 select-none touch-pan-y"
-        :class="isTop ? 'cursor-grab active:cursor-grabbing z-10' : `pointer-events-none z-${10 - stackOffset}`"
+        class="select-none touch-pan-y w-full"
+        :class="(isTop || inFlow)
+            ? ['relative z-10', isTop && 'cursor-grab active:cursor-grabbing']
+            : `absolute inset-x-0 top-0 pointer-events-none z-${10 - stackOffset}`"
         :style="{ transform: cardTransform, transition: cardTransition }"
         @pointerdown="onPointerDown"
         @pointermove="onPointerMove"
@@ -278,8 +291,8 @@ const mapUrl = computed(() => {
                 <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-[#111118]" />
 
                 <!-- Offen/Geschlossen (oben rechts) -->
-                <div class="absolute top-3 right-3 flex items-center gap-1.5 text-sm px-2.5 py-1 rounded-full backdrop-blur-sm" :class="station.isOpen ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800' : 'bg-zinc-900/80 text-zinc-500 border border-zinc-700'">
-                    <span class="w-1.5 h-1.5 rounded-full" :class="station.isOpen ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600'" />
+                <div class="absolute top-3 right-3 flex items-center gap-1.5 text-sm px-2.5 py-1 rounded-full backdrop-blur-sm" :class="station.isOpen ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800' : 'bg-red-950/80 text-red-400 border border-red-800'">
+                    <span class="w-1.5 h-1.5 rounded-full" :class="station.isOpen ? 'bg-emerald-400' : 'bg-red-500'" />
                     {{ station.isOpen ? "Geöffnet" : "Geschlossen" }}
                 </div>
 
@@ -296,7 +309,7 @@ const mapUrl = computed(() => {
             </div>
 
             <!-- Content -->
-            <div class="p-5 flex flex-col gap-3">
+            <div class="px-4 py-4 flex flex-col gap-2">
                 <!-- Name & Adresse -->
                 <div>
                     <h2 class="text-xl font-extrabold text-white">
@@ -369,6 +382,14 @@ const mapUrl = computed(() => {
 
             <!-- Brand color gradient at bottom -->
             <div class="bottom-0 inset-x-0 h-160 pointer-events-none" :style="`background: linear-gradient(to top, ${brandAccent.header}cc 0%, transparent 100%)`" />
+
+            <!-- Share button -->
+            <div v-if="canShare && shareData" class="px-4 pb-4">
+                <button class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-yellow-500/20 hover:bg-white/25 active:bg-white/30 border border-white/25 text-white font-semibold text-sm transition-colors" @click.stop="share">
+                    <Share2 class="w-4 h-4" />
+                    Teilen
+                </button>
+            </div>
 
             <!-- NEIN overlay -->
             <div class="absolute inset-0 flex items-start justify-end p-7 pointer-events-none" :style="{ opacity: nopeOpacity }">
