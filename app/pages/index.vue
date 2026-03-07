@@ -3,7 +3,7 @@ import { Heart, X, RefreshCw, MapPin, Navigation, Flame, ChevronLeft, ChevronRig
 import type { Station, StationsApiResponse } from "~/types/station";
 import GasCard from "~/components/GasCard.vue";
 
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 const MOCK_STATIONS: Station[] = [
     { id: "1", name: "Aral Tankstelle", brand: "Aral", street: "Hauptstraße", houseNumber: "12", postCode: 10115, place: "Berlin", lat: 52.52, lng: 13.405, dist: 0.4, e5: 1.789, e10: 1.759, diesel: 1.689, isOpen: true },
@@ -247,7 +247,7 @@ function mapsLink(station: Station) {
 
         <!-- Card Stack -->
         <div class="relative flex flex-col items-center justify-start px-4 overflow-x-hidden">
-            <div class="relative w-full" style="height: 560px; max-width: 420px">
+            <div class="relative w-full" style="height: 460px;">
                 <!-- Geolocation pending -->
                 <Transition name="fade">
                     <div v-if="locationPending" class="absolute inset-0 flex flex-col items-center justify-center gap-4">
