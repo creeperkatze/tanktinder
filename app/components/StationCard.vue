@@ -27,7 +27,7 @@ const currentY = ref(0);
 const isFlying = ref(false);
 const flyDirection = ref<"left" | "right" | null>(null);
 
-const SWIPE_THRESHOLD = 120;
+const SWIPE_THRESHOLD = 100;
 
 const offsetX = computed(() => currentX.value - startX.value);
 const offsetY = computed(() => currentY.value - startY.value);

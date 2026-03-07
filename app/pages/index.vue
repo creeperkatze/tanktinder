@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Heart, X, RefreshCw, MapPin, Navigation, Flame, ChevronLeft, ChevronRight } from "lucide-vue-next";
 import type { Station, StationsApiResponse } from "~/types/station";
-import GasCard from "~/components/GasCard.vue";
+import StationCard from "~/components/StationCard.vue";
 
 const USE_MOCK = false;
 
@@ -111,7 +111,7 @@ onUnmounted(() => {
 });
 
 // Swipe Logic
-const cardRefs: Record<string, InstanceType<typeof GasCard>> = {};
+const cardRefs: Record<string, InstanceType<typeof StationCard>> = {};
 
 function handleSwipeLeft() {
     if (!hasMoreCards.value) return;
@@ -172,7 +172,7 @@ const desperationColor = computed(() => {
 // Share data helper
 function stationShareData(station: Station) {
     const fmt = (p: number | false) => (typeof p === "number" ? p.toFixed(3).replace(".", ",") + " €" : null);
-    const prices = [station.e5 !== false && `Super: ${fmt(station.e5)}`, station.e10 !== false && `Super E10: ${fmt(station.e10)}`, station.diesel !== false && `Diesel: ${fmt(station.diesel)}`].filter(Boolean).join(" · ");
+    const prices = [station.e5 !== false && `Super: ${fmt(station.e5)}`, station.e10 !== false && `Super E10: ${fmt(station.e10)}`, station.diesel !== false && `Diesel: ${fmt(station.diesel)}`].filter(Boolean).join("\n");
 
     const primary = typeof station.e5 === "number" ? station.e5 : typeof station.e10 === "number" ? station.e10 : typeof station.diesel === "number" ? station.diesel : null;
     const avg = averagePrice.value;
@@ -180,9 +180,8 @@ function stationShareData(station: Station) {
     const tag = diff === null ? "" : diff <= -5 ? `-${Math.abs(diff)} ct` : diff >= 5 ? `+${diff} ct` : `±0 ct`;
 
     return {
-        title: `${station.brand} in ${station.place}${tag ? ` (${tag})` : ""}`,
-        text: `${station.name}, ${station.street} ${station.houseNumber}, ${station.postCode} ${station.place}\n\n💸${prices}\n\n🗺️ ${mapsLink(station)}\n\n`,
-        url: window.location.origin,
+        title: `Ich hab günstigen Sprit gefunden! ⛽`,
+        text: `Mit TankTinder hab ich ${station.brand} in ${station.place} gefunden${tag ? ` (${tag} Schnitt)` : ""}!\n\n💸 ${prices}\n🗺️ ${mapsLink(station)}\n\n👉 Selbst ausprobieren: ${window.location.origin}`,
     };
 }
 
@@ -303,12 +302,12 @@ function mapsLink(station: Station) {
 
                 <!-- Card Stack  -->
                 <TransitionGroup name="card-stack">
-                    <GasCard
+                    <StationCard
                         v-for="{ station, offset } in [...visibleCards].reverse()"
                         :key="station.id"
                         :ref="
                             (el) => {
-                                if (el) cardRefs[station.id] = el as InstanceType<typeof GasCard>;
+                                if (el) cardRefs[station.id] = el as InstanceType<typeof StationCard>;
                                 else delete cardRefs[station.id];
                             }
                         "
@@ -364,9 +363,9 @@ function mapsLink(station: Station) {
 
                     <!-- Card + CTAs container -->
                     <div class="border border-white/10 rounded-3xl p-4 w-full flex flex-col gap-4" style="max-width: 452px">
-                        <!-- Reuse GasCard — non-interactive, shows map + all info -->
+                        <!-- Reuse StationCard — non-interactive, shows map + all info -->
                         <div class="relative w-full" style="height: 540px">
-                            <GasCard :station="matchedStation" :is-top="false" :in-flow="true" :stack-offset="0" :area-average="averagePrice" :share-data="stationShareData(matchedStation)" @swipe-left="() => {}" @swipe-right="() => {}" />
+                            <StationCard :station="matchedStation" :is-top="false" :in-flow="true" :stack-offset="0" :area-average="averagePrice" :share-data="stationShareData(matchedStation)" @swipe-left="() => {}" @swipe-right="() => {}" />
                         </div>
 
                         <!-- CTAs -->
