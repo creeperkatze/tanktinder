@@ -269,10 +269,12 @@ const mapUrl = computed(() => {
 <template>
     <div
         ref="cardRef"
-        class="select-none touch-pan-y w-full"
-        :class="(isTop || inFlow)
-            ? ['relative z-10', isTop && 'cursor-grab active:cursor-grabbing']
-            : `absolute inset-x-0 top-0 pointer-events-none z-${10 - stackOffset}`"
+        class="select-none touch-pan-y absolute inset-x-0 top-0"
+        :class="isTop
+            ? 'cursor-grab active:cursor-grabbing z-10'
+            : inFlow
+                ? 'z-10'
+                : `pointer-events-none z-${10 - stackOffset}`"
         :style="{ transform: cardTransform, transition: cardTransition }"
         @pointerdown="onPointerDown"
         @pointermove="onPointerMove"
