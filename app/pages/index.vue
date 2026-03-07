@@ -36,32 +36,9 @@ const showMatchOverlay = ref(false);
 const swipeCount = ref(0);
 const rejectedCount = ref(0);
 
-function getPrice(s: Station): number {
-    if (typeof s.e5 === "number" && s.e5 > 0) return s.e5;
-    if (typeof s.e10 === "number" && s.e10 > 0) return s.e10;
-    if (typeof s.diesel === "number" && s.diesel > 0) return s.diesel;
-    return Infinity;
-}
-
-function arrangeStations(list: Station[]): Station[] {
-    const sorted = [...list].sort((a, b) => getPrice(a) - getPrice(b));
-    const topCount = Math.max(1, Math.ceil(sorted.length * 0.28));
-    const top = sorted.slice(0, topCount); // bangers (cheapest)
-    const rest = sorted.slice(topCount).reverse(); // rest, worst-first for contrast
-
-    const result: Station[] = [];
-    let ti = 0, ri = 0;
-    while (ti < top.length || ri < rest.length) {
-        // 2 average/bad, then 1 banger
-        for (let i = 0; i < 2 && ri < rest.length; i++) result.push(rest[ri++]!);
-        if (ti < top.length) result.push(top[ti++]!);
-    }
-    return result;
-}
-
 watch(data, (d) => {
     if (d) {
-        stations.value = arrangeStations(d.stations);
+        stations.value = [...d.stations];
         currentIndex.value = 0;
         matchedStation.value = null;
         showMatchOverlay.value = false;
@@ -194,21 +171,15 @@ function swipeRightButton() {
 }
 
 // Desperation Meter
-const averagePrice = computed(() => {
-    const prices = stations.value
-        .map((s: Station) => {
-            const v = s.e5 ?? s.e10 ?? s.diesel;
-            return typeof v === "number" && v > 0 ? v : null;
-        })
-        .filter((p: number | null): p is number => p !== null);
-    if (!prices.length) return null;
-    return prices.reduce((a: number, b: number) => a + b, 0) / prices.length;
-});
-
-const desperationLevel = computed(() => {
-    const avg = averagePrice.value;
-    if (avg === null) return 0;
-    return Math.min(100, Math.max(0, ((avg - 1.4) / (2.2 - 1.4)) * 100));
+const averagePrice = computed(() => data.value?.averagePrice ?? null);
+const desperationLevel = computed(() => data.value?.desperationLevel ?? 0);
+const desperationLabel = computed(() => {
+    if (averagePrice.value === null) return "";
+    const lvl = desperationLevel.value;
+    if (lvl < 30) return "Günstig";
+    if (lvl < 60) return "Mittel";
+    if (lvl < 80) return "Teuer";
+    return "Sehr teuer";
 });
 
 const desperationColor = computed(() => {
@@ -225,15 +196,6 @@ const desperationBarColor = computed(() => {
     if (lvl < 60) return "#eab308";
     if (lvl < 80) return "#f97316";
     return "#ef4444";
-});
-
-const desperationLabel = computed(() => {
-    if (averagePrice.value === null) return "";
-    const lvl = desperationLevel.value;
-    if (lvl < 30) return "Günstig";
-    if (lvl < 60) return "Mittel";
-    if (lvl < 80) return "Teuer";
-    return "Sehr teuer";
 });
 
 // Share data helper

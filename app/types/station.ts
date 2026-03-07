@@ -18,4 +18,6 @@ export interface Station {
 export interface StationsApiResponse {
   ok: boolean
   stations: Station[]
+  averagePrice: number | null
+  desperationLevel: number
 }

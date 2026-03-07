@@ -78,5 +78,68 @@ export default defineEventHandler(async (event) => {
   const ip = String(getRequestIP(event, { xForwardedFor: true }) ?? 'server')
   capture('stations_fetched', { $ip: ip, lat, lng, rad, station_count: stations.length }, ip)
 
-  return { ok: true, stations }
+  const arranged = arrangeStations(stations)
+  const averagePrice = computeAveragePrice(stations)
+  const desperationLevel = computeDesperationLevel(averagePrice)
+  return { ok: true, stations: arranged, averagePrice, desperationLevel }
 })
+
+function getPrice(s: Station): number {
+  if (typeof s.e5 === 'number' && s.e5 > 0) return s.e5
+  if (typeof s.e10 === 'number' && s.e10 > 0) return s.e10
+  if (typeof s.diesel === 'number' && s.diesel > 0) return s.diesel
+  return Infinity
+}
+
+function arrangeStations(list: Station[]): Station[] {
+  if (list.length <= 2) return [...list].sort((a, b) => getPrice(a) - getPrice(b))
+
+  const sorted = [...list].sort((a, b) => getPrice(a) - getPrice(b))
+  const topCount = Math.max(1, Math.ceil(sorted.length * 0.28))
+  const top = sorted.slice(0, topCount)
+  const rest = sorted.slice(topCount).reverse()
+
+  const n = sorted.length
+  const topSlots = new Set<number>()
+  topSlots.add(Math.min(3, n - 1))
+
+  const extra = top.length - 1
+  if (extra > 0) {
+    const lo = Math.min(5, n - 1)
+    const hi = Math.min(9, n - 1)
+    for (let i = 0; i < extra; i++) {
+      let idx = extra === 1 ? lo : Math.round(lo + (i / (extra - 1)) * (hi - lo))
+      idx = Math.min(idx, n - 1)
+      while (topSlots.has(idx) && idx < n - 1) idx++
+      topSlots.add(idx)
+    }
+  }
+
+  const sortedSlots = [...topSlots].sort((a, b) => a - b)
+  const result: Station[] = []
+  let ti = 0, ri = 0
+
+  for (let i = 0; i < n; i++) {
+    if (sortedSlots[ti] === i) {
+      result.push(top[ti++]!)
+    } else {
+      result.push(rest[ri++]!)
+    }
+  }
+
+  return result
+}
+
+function computeAveragePrice(stations: Station[]): number | null {
+  const prices = stations
+    .map(s => { const v = getPrice(s); return v < Infinity ? v : null })
+    .filter((p): p is number => p !== null)
+  if (!prices.length) return null
+  return prices.reduce((a, b) => a + b, 0) / prices.length
+}
+
+function computeDesperationLevel(avg: number | null): number {
+  if (avg === null) return 0
+  return Math.min(100, Math.max(0, ((avg - 1.4) / (2.2 - 1.4)) * 100))
+}
+
