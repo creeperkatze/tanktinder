@@ -181,7 +181,7 @@ const brandDomains: Record<string, string> = {
     eni: "eni.com",
     orlen: "orlen.de",
     star: "star.de",
-    hem: "hem.de",
+    hem: "hem-tankstelle.de",
     hoyer: "hoyer.de",
     westfalen: "westfalen-ag.de",
     neste: "neste.com",
