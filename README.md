@@ -1,75 +1,49 @@
-# Nuxt Minimal Starter
+# <a href="https://tanktinder.creeperkatze.de"><img src=".github/assets/logo.png" alt="TankTinder" width="400"></a>
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Tinder for gas stations. Find cheap fuel near you by swiping through nearby stations.
 
-## Setup
+[![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/2gyj1.svg)](https://status.creeperkatze.de)
+![GitHub Issues](https://img.shields.io/github/issues/creeperkatze/tanktinder?labelColor=0d143c)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/creeperkatze/tanktinder?labelColor=0d143c)
+![GitHub Repo stars](https://img.shields.io/github/stars/creeperkatze/tanktinder?style=flat&labelColor=0d143c)
 
-Make sure to install dependencies:
+## 🚀 Quick Start
+
+Use the **[Website](https://tanktinder.creeperkatze.de)**.
+
+Grant location access, swipe right to match a station, swipe left to skip. The desperation meter shows the average fuel price in your area.
+
+## 👨‍💻 Development
+
+### Prerequisites
+
+- Node.js
+- pnpm
+
+### Installation
 
 ```bash
-# npm
-npm install
+# Clone the repository
+git clone https://github.com/creeperkatze/tanktinder.git
+cd tanktinder
 
-# pnpm
+# Install dependencies
 pnpm install
 
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
+# Start development server
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+### Environment Variables
 
-Build the application for production:
+Copy the .env.example file and rename it to .env.
 
-```bash
-# npm
-npm run build
+| Variable | Description |
+|----------|-------------|
+| `NUXT_TANKERKOENIG_API_KEY` | Tankerkoenig API key (required) |
 
-# pnpm
-pnpm build
+Get a Tankerkoenig API key at [creativecommons.tankerkoenig.de](https://creativecommons.tankerkoenig.de).
 
-# yarn
-yarn build
+## 📜 License
 
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+AGPL-3.0
