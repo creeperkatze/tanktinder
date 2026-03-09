@@ -7,6 +7,9 @@ Tinder for gas stations. Find cheap fuel near you by swiping through nearby stat
 ![GitHub Pull Requests](https://img.shields.io/github/issues-pr/creeperkatze/tanktinder?labelColor=0d143c)
 ![GitHub Repo stars](https://img.shields.io/github/stars/creeperkatze/tanktinder?style=flat&labelColor=0d143c)
 
+> [!NOTE]
+> TankTinder currently only supports Germany, as it uses the Tankerkönig API.
+
 ## 🚀 Quick Start
 
 Use the **[Website](https://tanktinder.creeperkatze.de)**.
@@ -40,7 +43,7 @@ Copy the .env.example file and rename it to .env.
 
 | Variable | Description |
 |----------|-------------|
-| `NUXT_TANKERKOENIG_API_KEY` | Tankerkoenig API key (required) |
+| `TANKERKOENIG_API_KEY` | Tankerkoenig API key (required) |
 
 Get a Tankerkoenig API key at [creativecommons.tankerkoenig.de](https://creativecommons.tankerkoenig.de).
 
