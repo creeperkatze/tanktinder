@@ -43,7 +43,7 @@ Copy the .env.example file and rename it to .env.
 
 | Variable | Description |
 |----------|-------------|
-| `TANKERKOENIG_API_KEY` | Tankerkoenig API key (required) |
+| `NUXT_TANKERKOENIG_API_KEY` | Tankerkoenig API key (required) |
 
 Get a Tankerkoenig API key at [creativecommons.tankerkoenig.de](https://creativecommons.tankerkoenig.de).
 
