@@ -16,9 +16,7 @@
 
                 <section>
                     <h2 class="text-lg font-bold text-white mb-3">Analyse</h2>
-                    <p class="mb-3">
-                        Diese Website verwendet <strong class="text-white">PostHog</strong> (PostHog, Inc.), ein Webanalysetool. Es werden die EU-Server von PostHog genutzt – die Daten werden ausschließlich innerhalb der Europäischen Union verarbeitet und gespeichert.
-                    </p>
+                    <p class="mb-3">Diese Website verwendet <strong class="text-white">PostHog</strong> (PostHog, Inc.), ein Webanalysetool. Es werden die EU-Server von PostHog genutzt – die Daten werden ausschließlich innerhalb der Europäischen Union verarbeitet und gespeichert.</p>
                     <p class="mb-3">Dabei werden folgende Daten erfasst:</p>
                     <ul class="list-disc list-inside space-y-1 text-gray-400 ml-2">
                         <li>Seitenaufrufe und Nutzerinteraktionen (z.&nbsp;B. Suchanfragen)</li>
@@ -26,23 +24,17 @@
                         <li>Browser- und Geräteinformationen (User-Agent)</li>
                         <li>Ungefährer Standort (Stadt/Region), abgeleitet aus der IP</li>
                     </ul>
-                    <p class="mt-3">
-                        Die Erfassung dient ausschließlich der Verbesserung der Anwendung. Es werden keine persönlichen Profile erstellt und keine Daten an Werbeplattformen übermittelt.
-                    </p>    
+                    <p class="mt-3">Die Erfassung dient ausschließlich der Verbesserung der Anwendung. Es werden keine persönlichen Profile erstellt und keine Daten an Werbeplattformen übermittelt.</p>
                 </section>
 
                 <section>
                     <h2 class="text-lg font-bold text-white mb-3">Standortdaten</h2>
-                    <p>
-                        Zur Anzeige naher Tankstellen wird dein Standort abgefragt. Dieser wird ausschließlich für die Tankstellen-API-Anfrage verwendet und nicht gespeichert. Alternativ kann ein ungefährer Standort per IP-Geolokalisierung (ipapi.co) ermittelt werden – auch dieser wird nicht dauerhaft gespeichert.
-                    </p>
+                    <p>Zur Anzeige naher Tankstellen wird dein Standort abgefragt. Dieser wird ausschließlich für die Tankstellen-API-Anfrage verwendet und nicht gespeichert. Alternativ kann ein ungefährer Standort per IP-Geolokalisierung (ipapi.co) ermittelt werden – auch dieser wird nicht dauerhaft gespeichert.</p>
                 </section>
 
                 <section>
                     <h2 class="text-lg font-bold text-white mb-3">Deine Rechte</h2>
-                    <p>
-                        Du hast das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung deiner Daten sowie das Recht auf Datenübertragbarkeit. Wende dich dazu an die oben genannte Kontaktadresse.
-                    </p>
+                    <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung deiner Daten sowie das Recht auf Datenübertragbarkeit. Wende dich dazu an die oben genannte Kontaktadresse.</p>
                 </section>
             </div>
 

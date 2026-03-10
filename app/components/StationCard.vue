@@ -252,7 +252,7 @@ const mapUrl = computed(() => {
 
 <template>
     <div ref="cardRef" class="select-none touch-pan-y absolute inset-x-0 top-0" :class="isTop ? 'cursor-grab active:cursor-grabbing z-10' : inFlow ? 'z-10' : `pointer-events-none z-${10 - stackOffset}`" :style="{ transform: cardTransform, transition: cardTransition }" @pointerdown="onPointerDown" @pointermove="onPointerMove" @pointerup="onPointerUp" @pointercancel="onPointerUp">
-        <div class="relative rounded-2xl overflow-hidden bg-[#111118] border border-white/[0.06] flex flex-col" style="height: 470px;">
+        <div class="relative rounded-2xl overflow-hidden bg-[#111118] border border-white/[0.06] flex flex-col" style="height: 470px">
             <!-- Brand color gradient at bottom
             <div class="absolute bottom-0 inset-x-0 h-28 pointer-events-none" :style="`background: linear-gradient(to top, ${brandAccent.header}dd 0%, transparent 100%)`" />
             -->
