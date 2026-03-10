@@ -461,6 +461,8 @@ function mapsLink(station: Station) {
                 <span>©2025 Creeperkatze</span>
                 <span>·</span>
                 <NuxtLink to="/privacy" class="hover:text-gray-400 transition-colors">Datenschutz</NuxtLink>
+                <span>·</span>
+                <a href="https://github.com/creeperkatze/tanktinder" target="_blank" rel="noopener noreferrer" class="hover:text-gray-400 transition-colors">Quelle</a>
             </div>
         </footer>
     </div>
