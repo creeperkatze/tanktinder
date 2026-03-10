@@ -32,6 +32,9 @@ importers:
       posthog-node:
         specifier: ^5.28.0
         version: 5.28.0
+      tankerkoenig-js:
+        specifier: ^1.0.11
+        version: 1.0.11
       vue:
         specifier: ^3.5.29
         version: 3.5.29(typescript@5.9.3)
@@ -4264,6 +4267,10 @@ packages:
     resolution: {integrity: sha512-3ofp+LL8E+pK/JuPLPggVAIaEuhvIz4qNcf3nA1Xn2o/7fb7s/TYpHhwGDv1ZU3PkBluUVaF8PyCHcm48cKLWQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
+
+  tankerkoenig-js@1.0.11:
+    resolution: {integrity: sha512-QG8SzdsO8cfANc43cDgG8VLiatVqPAQRezi/fONQ6PsfAUxiAlN2ZQjhtGSJNc6qIqq882D4p4dxJ/xqkNLubg==}
+    engines: {node: '>=18'}
 
   tar-stream@3.1.8:
     resolution: {integrity: sha512-U6QpVRyCGHva435KoNWy9PRoi2IFYCgtEhq9nmrPPpbRacPs9IH4aJ3gbrFC8dPcXvdSZ4XXfXT5Fshbp2MtlQ==}
@@ -9423,6 +9430,8 @@ snapshots:
     transitivePeerDependencies:
       - tsx
       - yaml
+
+  tankerkoenig-js@1.0.11: {}
 
   tar-stream@3.1.8:
     dependencies:
