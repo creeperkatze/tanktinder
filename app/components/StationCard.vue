@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MapPin, Clock, Fuel, Heart, X, Flame, Zap, TrendingDown, TrendingUp, Minus } from "lucide-vue-next";
+import { MapPin, Clock, Fuel, Heart, X, Flame, Zap, TrendingDown, TrendingUp, Minus } from "@lucide/vue";
 import type { Station } from "~/types/station";
 
 const props = defineProps<{

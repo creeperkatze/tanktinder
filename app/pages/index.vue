@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Heart, X, RefreshCw, MapPin, Navigation, Share2 } from "lucide-vue-next";
+import { Heart, X, RefreshCw, MapPin, Navigation, Share2 } from "@lucide/vue";
 import type { Station, StationsApiResponse } from "~/types/station";
 import StationCard from "~/components/StationCard.vue";
 
