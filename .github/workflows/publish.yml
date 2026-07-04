@@ -22,13 +22,6 @@ jobs:
         uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
         with:
             images: ghcr.io/creeperkatze/tanktinder
-            labels: |
-                org.opencontainers.image.title=tanktinder
-                org.opencontainers.image.description=Tinder für Tankstellen
-                org.opencontainers.image.source=https://github.com/creeperkatze/tanktinder
-            annotations: |
-                org.opencontainers.image.title=tanktinder
-                org.opencontainers.image.description=Tinder für Tankstellen
       - name: 🔑 Login to GitHub Packages
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:

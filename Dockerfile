@@ -1,19 +1,20 @@
-FROM node:22-slim
-
-LABEL org.opencontainers.image.source=https://github.com/creeperkatze/tanktinder
+FROM node:22-slim AS builder
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
 RUN corepack enable
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 COPY . .
-
 RUN pnpm build
 
-RUN chown -R node:node /app
+FROM node:22-slim AS runner
+
+WORKDIR /app
+
+COPY --from=builder /app/.output ./.output
 
 USER node
 
